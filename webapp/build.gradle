@@ -1,0 +1,19 @@
+plugins {
+	id 'com.moowork.node' version '1.3.1'
+}
+
+apply plugin: 'com.moowork.node'
+
+node {
+	version = '12.8.1'
+	npmVersion = '6.10.2'
+	download = true
+}
+
+task clean {
+  delete "dist"
+}
+
+task assemble (dependsOn: npm_run_build)
+task test (dependsOn: npm_run_test)
+task build (dependsOn: [assemble, test])
