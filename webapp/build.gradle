@@ -15,5 +15,4 @@ task clean {
 }
 
 task assemble (dependsOn: npm_run_build)
-task test (dependsOn: npm_run_test)
-task build (dependsOn: [assemble, test])
+task build (dependsOn: assemble)
