@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {Player} from "./player";
+import {environment} from "../../environments/environment";
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlayerResourceService {
-  private RESOURCE_URL = '/players';
+  private RESOURCE_URL = environment.apiUrl + '/players';
 
   constructor(private http: HttpClient) { }
 
