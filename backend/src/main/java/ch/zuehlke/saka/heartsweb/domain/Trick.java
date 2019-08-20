@@ -47,4 +47,15 @@ public class Trick {
 				.map(Map.Entry::getKey)
 				.orElseThrow(() -> new IllegalStateException("This should never happen"));
     }
+
+    public int determinePoints() {
+	    int numberOfHeartsCards = (int) trickPot.values().stream()
+			    .filter(card -> card.cardColor() == CardColor.HEARTS)
+			    .count();
+
+	    boolean containsSpadesQueen = trickPot.containsValue(new Card(CardColor.SPADES, CardRank.QUEEN));
+	    int spadesPoints = containsSpadesQueen ? 13 : 0;
+
+	    return numberOfHeartsCards + spadesPoints;
+    }
 }

@@ -95,6 +95,56 @@ public class TrickTest {
 		assertThat(result).isEqualTo(FIRST_PLAYER.id());
 	}
 
+	@Test
+	public void determinePoints_trickContainsOneCardOfColorHearts_returns1() {
+		Game game = gameWith4Players();
+		Trick testee = new Trick(FIRST_PLAYER.id(), game);
+
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.NUMBER_08), FIRST_PLAYER.id());
+		int result = testee.determinePoints();
+
+		assertThat(result).isEqualTo(1);
+	}
+
+	@Test
+	public void determinePoints_trickContainsSpadesQueen_returns13() {
+		Game game = gameWith4Players();
+		Trick testee = new Trick(FIRST_PLAYER.id(), game);
+
+		testee.playCard(new Card(CardColor.SPADES, CardRank.QUEEN), FIRST_PLAYER.id());
+		int result = testee.determinePoints();
+
+		assertThat(result).isEqualTo(13);
+	}
+
+	@Test
+	public void determinePoints_trickContainsSpadesQueenAnd3CardsOfColorHearts_returns16() {
+		Game game = gameWith4Players();
+		Trick testee = new Trick(FIRST_PLAYER.id(), game);
+
+		testee.playCard(new Card(CardColor.SPADES, CardRank.QUEEN), FIRST_PLAYER.id());
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.ACE), SECOND_PLAYER.id());
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.KING), THIRD_PLAYER.id());
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.NUMBER_02), FOURTH_PLAYER.id());
+		int result = testee.determinePoints();
+
+		assertThat(result).isEqualTo(16);
+	}
+
+	@Test
+	public void determinePoints_trickContainsNoPoints_returns0() {
+		Game game = gameWith4Players();
+		Trick testee = new Trick(FIRST_PLAYER.id(), game);
+
+		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), FIRST_PLAYER.id());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.KING), SECOND_PLAYER.id());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.JACK), THIRD_PLAYER.id());
+		testee.playCard(new Card(CardColor.CLUBS, CardRank.QUEEN), FOURTH_PLAYER.id());
+		int result = testee.determinePoints();
+
+		assertThat(result).isEqualTo(0);
+	}
+
 	private Game gameWith4Players() {
 		Game game = new Game();
 		game.joinGame(FIRST_PLAYER);
