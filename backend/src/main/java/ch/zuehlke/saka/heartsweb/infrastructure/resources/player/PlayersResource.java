@@ -14,25 +14,25 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/players", produces = MediaTypes.HAL_JSON_UTF8_VALUE)
 public class PlayersResource {
-    private PlayerResourceAssembler playerResourceAssembler;
-    private PlayerRepository playerRepository;
+	private PlayerResourceAssembler playerResourceAssembler;
+	private PlayerRepository playerRepository;
 
-    public PlayersResource(PlayerResourceAssembler playerResourceAssembler, PlayerRepository playerRepository) {
-        this.playerResourceAssembler = playerResourceAssembler;
-        this.playerRepository = playerRepository;
-        this.playerRepository.add(new Player("foo"));
-    }
+	public PlayersResource(PlayerResourceAssembler playerResourceAssembler, PlayerRepository playerRepository) {
+		this.playerResourceAssembler = playerResourceAssembler;
+		this.playerRepository = playerRepository;
+		this.playerRepository.add(new Player("foo"));
+	}
 
-    @RequestMapping(method = RequestMethod.GET)
-    public Resources<Resource<PlayerDto>> getPlayers() {
-        List<Resource<PlayerDto>> resources = playerRepository.findAll().stream()
-                .map(player -> playerResourceAssembler.toResource(player))
-                .collect(Collectors.toList());
-        return new Resources<>(resources);
-    }
+	@RequestMapping(method = RequestMethod.GET)
+	public Resources<Resource<PlayerDto>> getPlayers() {
+		List<Resource<PlayerDto>> resources = playerRepository.findAll().stream()
+				.map(player -> playerResourceAssembler.toResource(player))
+				.collect(Collectors.toList());
+		return new Resources<>(resources);
+	}
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Resource<PlayerDto>> findById(@PathVariable String id) {
-        return null;
-    }
+	@GetMapping("/{id}")
+	public ResponseEntity<Resource<PlayerDto>> findById(@PathVariable String id) {
+		return null;
+	}
 }

@@ -2,27 +2,23 @@ package ch.zuehlke.saka.heartsweb.domain;
 
 import java.util.UUID;
 
-public class PlayerId {
+public class GameId {
 	private final UUID internalId;
 
-	public static PlayerId generate() {
-		return new PlayerId(UUID.randomUUID());
+	public static GameId generate() {
+		return new GameId(UUID.randomUUID());
 	}
 
-	public static PlayerId of(String id) {
-		return new PlayerId(UUID.fromString(id));
+	public static GameId of(String id) {
+		return new GameId(UUID.fromString(id));
 	}
 
-	private PlayerId(UUID internalId) {
+	private GameId(UUID internalId) {
 		this.internalId = internalId;
 	}
 
 	@Override
 	public String toString() {
-		return internalId.toString();
-	}
-
-	public String id() {
 		return internalId.toString();
 	}
 
@@ -38,8 +34,8 @@ public class PlayerId {
 			return false;
 		}
 
-		PlayerId playerId = (PlayerId) o;
-		return internalId.equals(playerId.internalId);
+		GameId gameId = (GameId) o;
+		return internalId.equals(gameId.internalId);
 	}
 
 	@Override

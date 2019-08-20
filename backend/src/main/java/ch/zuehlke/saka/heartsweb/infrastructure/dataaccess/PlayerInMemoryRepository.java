@@ -12,22 +12,22 @@ import java.util.Optional;
 
 @Repository
 public class PlayerInMemoryRepository implements PlayerRepository {
-    private final List<Player> playerList = new ArrayList<>();
+	private final List<Player> playerList = new ArrayList<>();
 
-    @Override
-    public List<Player> findAll() {
-        return Collections.unmodifiableList(playerList);
-    }
+	@Override
+	public List<Player> findAll() {
+		return Collections.unmodifiableList(playerList);
+	}
 
-    @Override
-    public Optional<Player> findById(PlayerId playerId) {
-        return playerList.stream()
-                .filter(player -> player.id().equals(playerId))
-                .findFirst();
-    }
+	@Override
+	public Optional<Player> findById(PlayerId playerId) {
+		return playerList.stream()
+				.filter(player -> player.id().equals(playerId))
+				.findFirst();
+	}
 
-    @Override
-    public void add(Player player) {
-        playerList.add(player);
-    }
+	@Override
+	public void add(Player player) {
+		playerList.add(player);
+	}
 }

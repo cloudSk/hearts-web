@@ -10,14 +10,14 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @Component
 public class PlayerResourceAssembler implements ResourceAssembler<Player, Resource<PlayerDto>> {
-    @Override
-    public Resource<PlayerDto> toResource(Player entity) {
-        return new Resource<>(map(entity),
-                linkTo(methodOn(PlayersResource.class).findById(entity.id().id())).withSelfRel()
-        );
-    }
+	@Override
+	public Resource<PlayerDto> toResource(Player entity) {
+		return new Resource<>(map(entity),
+				linkTo(methodOn(PlayersResource.class).findById(entity.id().id())).withSelfRel()
+		);
+	}
 
-    private PlayerDto map(Player entity) {
-        return new PlayerDto(entity.name(), entity.id().id());
-    }
+	private PlayerDto map(Player entity) {
+		return new PlayerDto(entity.name(), entity.id().id());
+	}
 }

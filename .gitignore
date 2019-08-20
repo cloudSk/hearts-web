@@ -23,4 +23,9 @@ hs_err_pid*
 
 .gradle
 .idea
-**/build/
+
+backend/build/
+webapp/build/
+
+backend/out/
+webapp/out/
