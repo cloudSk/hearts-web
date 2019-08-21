@@ -1,6 +1,7 @@
 package ch.zuehlke.saka.heartsweb.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Player {
@@ -26,13 +27,17 @@ public class Player {
 		return name;
 	}
 
-	void playCardToTrick(Card cardToPlay, Trick trick) {
+	public List<Card> remainingHand() {
+		return Collections.unmodifiableList(hand);
+	}
+
+	void playCardToRound(Card cardToPlay, Round round) {
 		if (!hand.contains(cardToPlay)) {
 			throw new IllegalArgumentException("Card=" + cardToPlay + " is not in current hand of playerId=" + id);
 		}
 
 		hand.remove(cardToPlay);
-		trick.playCard(cardToPlay, id);
+		round.playCard(cardToPlay, id);
 	}
 
 	void assignHand(List<Card> cardsInHand) {

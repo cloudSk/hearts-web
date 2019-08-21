@@ -13,37 +13,37 @@ import static org.mockito.Mockito.verify;
 public class PlayerTest {
 
 	@Test
-	public void playCardToTrick_cardAvailableInHand_cardPlayedToTrick() {
+	public void playCardToRound_cardAvailableInHand_cardPlayedToTrick() {
 		Player testee = new Player("Player");
 		Card card = new Card(CardColor.HEARTS, CardRank.ACE);
 		testee.assignHand(Arrays.asList(card));
-		Trick trickMock = mock(Trick.class);
+		Round roundMock = mock(Round.class);
 
-		testee.playCardToTrick(card, trickMock);
+		testee.playCardToRound(card, roundMock);
 
-		verify(trickMock).playCard(card, testee.id());
+		verify(roundMock).playCard(card, testee.id());
 	}
 
 	@Test
-	public void playCardToTrick_emptyHand_throwsIllegalArgumentException() {
+	public void playCardToRound_emptyHand_throwsIllegalArgumentException() {
 		Player testee = new Player("Player");
 		testee.assignHand(new ArrayList<>());
 		Card card = new Card(CardColor.HEARTS, CardRank.ACE);
 
-		Throwable result = catchThrowable(() -> testee.playCardToTrick(card, null));
+		Throwable result = catchThrowable(() -> testee.playCardToRound(card, null));
 
 		assertThat(result).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
-	public void playCardToTrick_sameCardTwice_throwsIllegalArgumentException() {
+	public void playCardToRound_sameCardTwice_throwsIllegalArgumentException() {
 		Player testee = new Player("Player");
 		Card card = new Card(CardColor.HEARTS, CardRank.ACE);
 		testee.assignHand(Arrays.asList(card));
-		Trick trick = new Trick(testee.id(), new Game());
+		Round round = new Round(new Game(), testee.id());
 
-		testee.playCardToTrick(card, trick);
-		Throwable result = catchThrowable(() -> testee.playCardToTrick(card, trick));
+		testee.playCardToRound(card, round);
+		Throwable result = catchThrowable(() -> testee.playCardToRound(card, round));
 
 		assertThat(result).isInstanceOf(IllegalArgumentException.class);
 	}

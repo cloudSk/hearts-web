@@ -54,6 +54,19 @@ public class TrickTest {
 	}
 
 	@Test
+	public void playCard_wrongPlayerPlaysCardIntoTrick_throwsIllegalArgumentException() {
+		Game game = gameWith4Players();
+		Trick testee = new Trick(FIRST_PLAYER.id(), game);
+
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER.id());
+		Throwable result = catchThrowable(
+				() -> testee.playCard(new Card(CardColor.DIAMONDS, CardRank.ACE), FOURTH_PLAYER.id())
+		);
+
+		assertThat(result).isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Test
 	public void determineWinner_allPlayersPlayedTheSameCardColor_highestCardWins() {
 		Game game = gameWith4Players();
 		Trick testee = new Trick(FIRST_PLAYER.id(), game);
