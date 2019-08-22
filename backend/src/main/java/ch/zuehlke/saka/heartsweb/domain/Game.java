@@ -13,6 +13,10 @@ public class Game {
         this.gameId = GameId.generate();
     }
 
+    public GameId id() {
+	    return gameId;
+    }
+
     public synchronized void joinGame(Player player) {
 		if (playerIds.size() >= MAX_PLAYER_AMOUNT) {
 			throw new IllegalStateException("Game already contains " + playerIds.size() + " players.");

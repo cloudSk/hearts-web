@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PlayerRepository {
-	List<Player> findAll();
+	List<Player> findAllInGame(GameId gameId);
 
-	Optional<Player> findById(PlayerId playerId);
+	Optional<Player> findById(GameId gameId, PlayerId playerId);
 
-	void add(Player player);
+	void add(GameId gameId, Player player);
 }

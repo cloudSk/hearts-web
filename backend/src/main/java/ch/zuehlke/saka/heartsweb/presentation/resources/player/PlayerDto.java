@@ -1,4 +1,4 @@
-package ch.zuehlke.saka.heartsweb.infrastructure.resources.player;
+package ch.zuehlke.saka.heartsweb.presentation.resources.player;
 
 public class PlayerDto {
 	private String name;
