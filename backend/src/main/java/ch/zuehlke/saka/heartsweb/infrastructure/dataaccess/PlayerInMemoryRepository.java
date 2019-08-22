@@ -27,9 +27,15 @@ public class PlayerInMemoryRepository implements PlayerRepository {
 
 	@Override
 	public void add(GameId gameId, Player player) {
-		players.merge(gameId, Arrays.asList(player), (list1, list2) -> {
+		players.merge(gameId, listOf(player), (list1, list2) -> {
 			list1.addAll(list2);
 			return list1;
 		});
+	}
+
+	private List<Player> listOf(Player player) {
+		List<Player> playerList = new ArrayList<>();
+		playerList.add(player);
+		return playerList;
 	}
 }
