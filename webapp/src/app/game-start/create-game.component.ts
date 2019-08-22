@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {GameResourceService} from "./game-resource.service";
-import {PlayerResourceService} from "../player/player-resource.service";
-import {Player} from "../player/player";
+import {PlayerResourceService} from "./player-resource.service";
+import {Player} from "./player";
 import {Router} from '@angular/router';
 
 @Component({

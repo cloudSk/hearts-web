@@ -5,21 +5,23 @@ import { FormsModule } from '@angular/forms';
 
 import {AppComponent} from './app.component';
 import {HttpClientModule} from '@angular/common/http';
-import {PlayerListComponent} from './player/player-list.component';
 import {CreateGameComponent} from "./game-start/create-game.component";
 import {WaitingAreaComponent} from "./game-start/waiting-area.component";
+import {WelcomeScreenComponent} from "./welcome-screen.component";
 
 const appRoutes: Routes = [
   { path: 'create-game', component: CreateGameComponent },
-  { path: 'waiting-area', component: WaitingAreaComponent }
+  { path: 'waiting-area', component: WaitingAreaComponent },
+  { path: 'welcome-screen', component: WelcomeScreenComponent },
+  { path: '', redirectTo: '/welcome-screen', pathMatch: 'full'}
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    PlayerListComponent,
     CreateGameComponent,
-    WaitingAreaComponent
+    WaitingAreaComponent,
+    WelcomeScreenComponent
   ],
   imports: [
     BrowserModule,
