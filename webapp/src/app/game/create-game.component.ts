@@ -8,13 +8,13 @@ import {Player} from "../player/player";
   templateUrl: './create-game.component.html'
 })
 export class CreateGameComponent {
-  username: string;
+  playerName: string;
 
   constructor(private gameResourceService: GameResourceService, private playerResourceService: PlayerResourceService) { }
 
   createGame() {
     let player = new Player();
-    player.name = this.username;
+    player.name = this.playerName;
 
     this.gameResourceService.createGame().subscribe(
       game => this.playerResourceService.joinGame(game.id, player).subscribe(

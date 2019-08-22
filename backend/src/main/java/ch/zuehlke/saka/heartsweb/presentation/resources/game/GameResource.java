@@ -3,6 +3,8 @@ package ch.zuehlke.saka.heartsweb.presentation.resources.game;
 import ch.zuehlke.saka.heartsweb.domain.Game;
 import ch.zuehlke.saka.heartsweb.domain.GameId;
 import ch.zuehlke.saka.heartsweb.domain.GameRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/games", produces = MediaTypes.HAL_JSON_UTF8_VALUE)
 public class GameResource {
+	private static final Logger LOGGER = LoggerFactory.getLogger(GameResource.class);
+
 	private GameResourceAssembler gameResourceAssembler;
 	private GameRepository gameRepository;
 
@@ -26,6 +30,8 @@ public class GameResource {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public Resources<Resource<GameDto>> getGames() {
+		LOGGER.debug("getGames called");
+
 		List<Resource<GameDto>> resources = gameRepository.findAll().stream()
 				.map(game -> gameResourceAssembler.toResource(game))
 				.collect(Collectors.toList());
@@ -34,6 +40,8 @@ public class GameResource {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Resource<GameDto>> findById(@PathVariable String id) {
+		LOGGER.debug("findById gameId={}", id);
+
 		GameId gameId = GameId.of(id);
 		return gameRepository.findById(gameId)
 				.map(gameResourceAssembler::toResource)
@@ -43,6 +51,8 @@ public class GameResource {
 
 	@PostMapping
 	public ResponseEntity<Resource<GameDto>> create() {
+		LOGGER.debug("create called");
+
 		Game newGame = new Game();
 		gameRepository.add(newGame);
 
