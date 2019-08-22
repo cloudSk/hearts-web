@@ -17,6 +17,10 @@ export class PlayerResourceService {
   findAll() : Observable<Player[]> {
     return this.http.get<Player[]>(this.RESOURCE_URL).pipe(
       map((result:any) => {
+        if (result._embedded == null) {
+          return [];
+        }
+
         return result._embedded.playerDtoList
       })
     )
