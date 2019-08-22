@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import {Player} from "./player";
 import {environment} from "../../environments/environment";
 
@@ -10,12 +10,18 @@ import {environment} from "../../environments/environment";
   providedIn: 'root'
 })
 export class PlayerResourceService {
-  private RESOURCE_URL = environment.apiUrl + '/players';
-
   constructor(private http: HttpClient) { }
 
-  findAll() : Observable<Player[]> {
-    return this.http.get<Player[]>(this.RESOURCE_URL).pipe(
+  joinGame(gameId: string, player: Player): Observable<Player> {
+    let url = `${environment.apiUrl}/games/${gameId}/players`;
+    return this.http.post<Player>(url, player).pipe(
+      tap((newPlayer: Player) => console.log(`Player with id=${newPlayer.id} joined the game`))
+    );
+  }
+
+  findAllPlayersInGame(gameId: string) : Observable<Player[]> {
+    let url = `${environment.apiUrl}/games/${gameId}/players`;
+    return this.http.get<Player[]>(url).pipe(
       map((result:any) => {
         if (result._embedded == null) {
           return [];

@@ -22,10 +22,6 @@ public class PlayerId {
 		return internalId.toString();
 	}
 
-	public String id() {
-		return internalId.toString();
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {

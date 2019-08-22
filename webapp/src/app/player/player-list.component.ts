@@ -13,8 +13,9 @@ export class PlayerListComponent implements OnInit {
   constructor(private playerResourceService: PlayerResourceService) { }
 
   ngOnInit() {
-    this.playerResourceService.findAll().subscribe(
-      players => this.playerList = players
-    );
+    // TODO
+    //this.playerResourceService.findAllPlayersInGame().subscribe(
+      //players => this.playerList = players
+   // );
   }
 }
