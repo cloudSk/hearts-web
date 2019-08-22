@@ -1,0 +1,15 @@
+<h1>Welcome to hearts-web</h1>
+<p>Please enter the following information to join a game:</p>
+<span> Player name:</span>
+<input type="text" [(ngModel)]="playerName" placeholder="Player name"/>
+
+<br/>
+
+<span> Game id:</span>
+<input type="text" [(ngModel)]="gameId" placeholder="Game id"/>
+
+<br/>
+<br/>
+
+<button class="button" (click)="joinGame()">Join game</button>
+
