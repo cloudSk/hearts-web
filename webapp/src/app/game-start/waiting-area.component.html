@@ -1,0 +1,14 @@
+<h1>Hello {{player.name}}</h1>
+<p>Current players in your game:</p>
+<ul>
+  <li *ngFor="let player of players; index as i">
+    <p>Player {{i + 1}}: {{player.name}}</p>
+  </li>
+</ul>
+
+<div *ngIf="waitingOnPlayers()">
+  <h3>Please share the following game id with your friends to join the game:</h3>
+  <h3>{{gameId}}</h3>
+</div>
+
+<button class="button" (click)="startGame()" [disabled]="waitingOnPlayers()">Start game</button>

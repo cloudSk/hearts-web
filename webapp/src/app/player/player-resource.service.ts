@@ -31,4 +31,9 @@ export class PlayerResourceService {
       })
     )
   }
+
+  findPlayer(gameId: string, playerId: string) : Observable<Player> {
+    let url = `${environment.apiUrl}/games/${gameId}/players/${playerId}`;
+    return this.http.get<Player>(url);
+  }
 }
