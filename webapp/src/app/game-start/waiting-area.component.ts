@@ -20,7 +20,7 @@ export class WaitingAreaComponent implements OnInit {
 
     this.playerResourceService.findPlayer(this.gameId, playerId)
       .subscribe(player => this.player = player);
-    this.playerResourceService.findAllPlayersInGame(this.gameId)
+    this.playerResourceService.allPlayersInGame(this.gameId)
       .subscribe(players => this.players = players);
   }
 
