@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -28,9 +28,8 @@ public class JoinedPlayersWebsocketController {
 		this.playerResourceAssembler = playerResourceAssembler;
 	}
 
-	@MessageMapping("/joinedPlayers")
-	@SendTo("/topic/joinedPlayers")
-	public Resources<Resource<PlayerDto>> getJoinedPlayers(String gameIdParameter) {
+	@SubscribeMapping("/topic/joinedPlayers/{gameIdParameter}")
+	public Resources<Resource<PlayerDto>> getJoinedPlayers(@DestinationVariable String gameIdParameter) {
 		LOGGER.debug("getJoinedPlayers gameId={}", gameIdParameter);
 
 		GameId gameId = GameId.of(gameIdParameter);

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {PlayerResourceService} from "./player-resource.service";
 import {Player} from "./player";
 import {ActivatedRoute} from '@angular/router';
@@ -7,7 +7,7 @@ import {ActivatedRoute} from '@angular/router';
   selector: 'waiting-area',
   templateUrl: './waiting-area.component.html'
 })
-export class WaitingAreaComponent implements OnInit {
+export class WaitingAreaComponent implements OnInit, OnDestroy {
   player: Player = new Player();
   gameId: string;
   players: Player[] = [];
@@ -22,6 +22,10 @@ export class WaitingAreaComponent implements OnInit {
       .subscribe(player => this.player = player);
     this.playerResourceService.allPlayersInGame(this.gameId)
       .subscribe(players => this.players = players);
+  }
+
+  ngOnDestroy(): void {
+    this.playerResourceService.unsubscribe();
   }
 
   waitingOnPlayers(): boolean {

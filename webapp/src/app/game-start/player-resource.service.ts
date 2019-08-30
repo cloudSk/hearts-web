@@ -32,15 +32,18 @@ export class PlayerResourceService {
 
   allPlayersInGame(gameId: string) : Observable<Player[]> {
     return new Observable<Player[]>(observer => {
-      this.client.onConnect = frame => {
-        this.client.subscribe('/topic/joinedPlayers', (message => {
+      this.client.onConnect = () => {
+        this.client.subscribe(`/topic/joinedPlayers/${gameId}`, (message => {
           let body = JSON.parse(message.body);
           observer.next(body.content);
         }));
-        this.client.publish({destination: "/app/joinedPlayers", body: gameId});
       };
       this.client.activate();
     });
+  }
+
+  unsubscribe() {
+    this.client.deactivate();
   }
 
   private initializeClient() : Client {
