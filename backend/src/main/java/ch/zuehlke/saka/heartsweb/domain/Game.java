@@ -26,10 +26,6 @@ public class Game {
 		}
 
 	    playerIds.add(player.id());
-
-	    DomainEventPublisher.instance()
-				.playerJoinedGame()
-				.publish(new PlayerJoinedGame(player.id(), id()));
 	}
 
 	public PlayerId nextPlayerAfter(PlayerId playerId) {

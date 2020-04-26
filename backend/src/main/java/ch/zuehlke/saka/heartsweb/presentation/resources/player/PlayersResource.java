@@ -24,11 +24,14 @@ public class PlayersResource {
 	private final PlayerResourceAssembler playerResourceAssembler;
 	private final PlayerRepository playerRepository;
 	private final GameRepository gameRepository;
+	private final PlayerJoiningService playerJoiningService;
 
-	public PlayersResource(PlayerResourceAssembler playerResourceAssembler, PlayerRepository playerRepository, GameRepository gameRepository) {
+	public PlayersResource(PlayerResourceAssembler playerResourceAssembler, PlayerRepository playerRepository,
+	                       GameRepository gameRepository, PlayerJoiningService playerJoiningService) {
 		this.playerResourceAssembler = playerResourceAssembler;
 		this.playerRepository = playerRepository;
 		this.gameRepository = gameRepository;
+		this.playerJoiningService = playerJoiningService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -66,10 +69,7 @@ public class PlayersResource {
 		}
 
 		Player player = map(playerDto);
-		game.get().joinGame(player);
-
-		LOGGER.info("Adding player with name={} and id={} to gameId={}", player.name(), player.id(), gameId);
-		playerRepository.add(gameId, player);
+		playerJoiningService.joinGame(player, game.get());
 
 		Resource<PlayerDto> resource = playerResourceAssembler.toResource(Pair.of(gameId, player));
 		return ResponseEntity
