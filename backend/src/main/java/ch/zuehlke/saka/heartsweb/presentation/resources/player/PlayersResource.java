@@ -61,20 +61,20 @@ public class PlayersResource {
 
 		GameId gameId = GameId.of(gameIdParameter);
 		Optional<Game> game = gameRepository.findById(gameId);
-		if (game.isPresent()) {
-			Player player = map(playerDto);
-			game.get().joinGame(player);
-
-			LOGGER.info("Adding player with name={} and id={} to gameId={}", player.name(), player.id(), gameId);
-			playerRepository.add(gameId, player);
-
-			Resource<PlayerDto> resource = playerResourceAssembler.toResource(Pair.of(gameId, player));
-			return ResponseEntity
-					.created(URI.create(resource.getId().getHref()))
-					.body(resource);
+		if (!game.isPresent()) {
+			return ResponseEntity.notFound().build();
 		}
 
-		return ResponseEntity.notFound().build();
+		Player player = map(playerDto);
+		game.get().joinGame(player);
+
+		LOGGER.info("Adding player with name={} and id={} to gameId={}", player.name(), player.id(), gameId);
+		playerRepository.add(gameId, player);
+
+		Resource<PlayerDto> resource = playerResourceAssembler.toResource(Pair.of(gameId, player));
+		return ResponseEntity
+				.created(URI.create(resource.getId().getHref()))
+				.body(resource);
 	}
 
 	private Player map(PlayerDto playerDto) {

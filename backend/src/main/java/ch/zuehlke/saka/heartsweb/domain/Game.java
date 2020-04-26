@@ -25,7 +25,11 @@ public class Game {
 			throw new IllegalArgumentException("Player with playerId=" + player.id() + "already joined game.");
 		}
 
-		playerIds.add(player.id());
+	    playerIds.add(player.id());
+
+	    DomainEventPublisher.instance()
+				.playerJoinedGame()
+				.publish(new PlayerJoinedGame(player.id(), id()));
 	}
 
 	public PlayerId nextPlayerAfter(PlayerId playerId) {
