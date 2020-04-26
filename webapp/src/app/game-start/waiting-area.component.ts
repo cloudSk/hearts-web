@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {PlayerResourceService} from "./player-resource.service";
-import {Player} from "./player";
+import {PlayerResourceService} from './player-resource.service';
+import {Player} from './player';
 import {ActivatedRoute} from '@angular/router';
 
 @Component({
@@ -15,7 +15,7 @@ export class WaitingAreaComponent implements OnInit, OnDestroy {
   constructor(private playerResourceService: PlayerResourceService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    let playerId = this.route.snapshot.queryParamMap.get('playerId');
+    const playerId = this.route.snapshot.queryParamMap.get('playerId');
     this.gameId = this.route.snapshot.queryParamMap.get('gameId');
 
     this.playerResourceService.findPlayer(this.gameId, playerId)
