@@ -8,14 +8,17 @@ public class Round {
 	private static final int CARDS_PER_ROUND = CARDS_PER_TRICK * 13;
 
 	private final List<Trick> tricks = new ArrayList<>();
-	private final Game game;
+	private final GameId gameId;
 	private final PlayerId roundInitiator;
+	private final SittingOrder sittingOrder;
+
 	private boolean heartsColorPlayed = false;
 	private int currentCardIndex = -1;
 
-	public Round(Game game, PlayerId roundInitiator) {
-		this.game = game;
+	public Round(GameId gameId, PlayerId roundInitiator, SittingOrder sittingOrder) {
+		this.gameId = gameId;
 		this.roundInitiator = roundInitiator;
+		this.sittingOrder = sittingOrder;
 	}
 
 	public void playCard(Card card, PlayerId playerId) {
@@ -31,7 +34,7 @@ public class Round {
 			createNewTrick();
 		}
 		Trick currentTrick = tricks.get(trickIndex);
-		currentTrick.playCard(card, playerId);
+		currentTrick.playCard(card, playerId, sittingOrder);
 
 		heartsColorPlayed = Boolean.logicalOr(heartsColorPlayed, card.cardColor() == CardColor.HEARTS);
 	}
@@ -46,13 +49,17 @@ public class Round {
 
 	private void createNewTrick() {
 		if (tricks.isEmpty()) {
-			tricks.add(new Trick(roundInitiator, game));
+			tricks.add(new Trick(roundInitiator, gameId));
 			return;
 		}
 
 		Trick lastTrick = tricks.get(tricks.size() - 1);
 		PlayerId newTrickInitiator = lastTrick.determineWinner();
-		Trick newTrick = new Trick(newTrickInitiator, game);
+		Trick newTrick = new Trick(newTrickInitiator, gameId);
 		tricks.add(newTrick);
+	}
+
+	public SittingOrder sittingOrder() {
+		return sittingOrder;
 	}
 }

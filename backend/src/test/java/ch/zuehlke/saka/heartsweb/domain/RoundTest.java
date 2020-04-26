@@ -8,18 +8,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 public class RoundTest {
-	private static final Player FIRST_PLAYER = new Player("First");
-	private static final Player SECOND_PLAYER = new Player("Second");
-	private static final Player THIRD_PLAYER = new Player("Third");
-	private static final Player FOURTH_PLAYER = new Player("Fourth");
 
 	@Test
 	public void playCard_roundAlreadyFinished_throwsIllegalStateException() {
-		Round testee = new Round(gameWith4Players(), FIRST_PLAYER.id());
+		Game game = GameFixture.gameWith4Players();
+		PlayerId firstPlayer = game.sittingOrder().north();
+		Round testee = new Round(game.id(), firstPlayer, game.sittingOrder());
 		playFullRound(testee);
 
 		Throwable result = catchThrowable(
-				() -> testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), FIRST_PLAYER.id())
+				() -> testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), firstPlayer)
 		);
 
 		assertThat(result).isInstanceOf(IllegalStateException.class);
@@ -27,8 +25,10 @@ public class RoundTest {
 
 	@Test
 	public void heartsColorPlayed_noCardsOfColorHeartsPlayed_returnsFalse() {
-		Round testee = new Round(gameWith4Players(), FIRST_PLAYER.id());
-		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), FIRST_PLAYER.id());
+		Game game = GameFixture.gameWith4Players();
+		PlayerId firstPlayer = game.sittingOrder().north();
+		Round testee = new Round(game.id(), firstPlayer, game.sittingOrder());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), firstPlayer);
 
 		boolean result = testee.heartsColorPlayed();
 
@@ -37,11 +37,12 @@ public class RoundTest {
 
 	@Test
 	public void heartsColorPlayed_twoCardsOfColorHeartsPlayed_returnsTrue() {
-		Round testee = new Round(gameWith4Players(), FIRST_PLAYER.id());
-		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), FIRST_PLAYER.id());
-		testee.playCard(new Card(CardColor.HEARTS, CardRank.ACE), SECOND_PLAYER.id());
-		testee.playCard(new Card(CardColor.HEARTS, CardRank.KING), THIRD_PLAYER.id());
-		testee.playCard(new Card(CardColor.SPADES, CardRank.KING), FOURTH_PLAYER.id());
+		Game game = GameFixture.gameWith4Players();
+		Round testee = new Round(game.id(), game.sittingOrder().north(), game.sittingOrder());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), game.sittingOrder().north());
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.ACE), game.sittingOrder().east());
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.KING), game.sittingOrder().south());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.KING), game.sittingOrder().west());
 
 		boolean result = testee.heartsColorPlayed();
 
@@ -50,11 +51,12 @@ public class RoundTest {
 
 	@Test
 	public void heartsColorPlayed_oneCardOfColorHeartsPlayed_returnsTrue() {
-		Round testee = new Round(gameWith4Players(), FIRST_PLAYER.id());
-		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), FIRST_PLAYER.id());
-		testee.playCard(new Card(CardColor.HEARTS, CardRank.ACE), SECOND_PLAYER.id());
-		testee.playCard(new Card(CardColor.SPADES, CardRank.KING), THIRD_PLAYER.id());
-		testee.playCard(new Card(CardColor.SPADES, CardRank.QUEEN), FOURTH_PLAYER.id());
+		Game game = GameFixture.gameWith4Players();
+		Round testee = new Round(game.id(), game.sittingOrder().north(), game.sittingOrder());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), game.sittingOrder().north());
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.ACE), game.sittingOrder().east());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.KING), game.sittingOrder().south());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.QUEEN), game.sittingOrder().west());
 
 		boolean result = testee.heartsColorPlayed();
 
@@ -63,7 +65,9 @@ public class RoundTest {
 
 	@Test
 	public void roundFinished_fullRoundPlayed_returnsTrue() {
-		Round testee = new Round(gameWith4Players(), FIRST_PLAYER.id());
+		Game game = GameFixture.gameWith4Players();
+		PlayerId firstPlayer = game.sittingOrder().north();
+		Round testee = new Round(game.id(), firstPlayer, game.sittingOrder());
 		playFullRound(testee);
 
 		boolean result = testee.roundFinished();
@@ -73,11 +77,12 @@ public class RoundTest {
 
 	@Test
 	public void roundFinished_oneTrickPlayed_returnsFalse() {
-		Round testee = new Round(gameWith4Players(), FIRST_PLAYER.id());
-		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), FIRST_PLAYER.id());
-		testee.playCard(new Card(CardColor.SPADES, CardRank.KING), SECOND_PLAYER.id());
-		testee.playCard(new Card(CardColor.SPADES, CardRank.QUEEN), THIRD_PLAYER.id());
-		testee.playCard(new Card(CardColor.SPADES, CardRank.JACK), FOURTH_PLAYER.id());
+		Game game = GameFixture.gameWith4Players();
+		Round testee = new Round(game.id(), game.sittingOrder().north(), game.sittingOrder());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), game.sittingOrder().north());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.KING), game.sittingOrder().east());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.QUEEN), game.sittingOrder().south());
+		testee.playCard(new Card(CardColor.SPADES, CardRank.JACK), game.sittingOrder().west());
 
 		boolean result = testee.roundFinished();
 
@@ -85,20 +90,16 @@ public class RoundTest {
 	}
 
 	private void playFullRound(Round round) {
-		IntStream.range(0, 13).forEach(i -> {
-			round.playCard(new Card(CardColor.DIAMONDS, CardRank.ACE), FIRST_PLAYER.id());
-			round.playCard(new Card(CardColor.DIAMONDS, CardRank.KING), SECOND_PLAYER.id());
-			round.playCard(new Card(CardColor.DIAMONDS, CardRank.QUEEN), THIRD_PLAYER.id());
-			round.playCard(new Card(CardColor.DIAMONDS, CardRank.JACK), FOURTH_PLAYER.id());
-		});
-	}
+		PlayerId firstPlayer = round.sittingOrder().north();
+		PlayerId secondPlayer = round.sittingOrder().east();
+		PlayerId thirdPlayer = round.sittingOrder().south();
+		PlayerId fourthPlayer = round.sittingOrder().west();
 
-	private Game gameWith4Players() {
-		Game game = new Game();
-		game.joinGame(FIRST_PLAYER);
-		game.joinGame(SECOND_PLAYER);
-		game.joinGame(THIRD_PLAYER);
-		game.joinGame(FOURTH_PLAYER);
-		return game;
+		IntStream.range(0, 13).forEach(i -> {
+			round.playCard(new Card(CardColor.DIAMONDS, CardRank.ACE), firstPlayer);
+			round.playCard(new Card(CardColor.DIAMONDS, CardRank.KING), secondPlayer);
+			round.playCard(new Card(CardColor.DIAMONDS, CardRank.QUEEN), thirdPlayer);
+			round.playCard(new Card(CardColor.DIAMONDS, CardRank.JACK), fourthPlayer);
+		});
 	}
 }

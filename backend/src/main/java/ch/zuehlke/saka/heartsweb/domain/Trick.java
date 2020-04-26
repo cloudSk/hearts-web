@@ -9,14 +9,14 @@ public class Trick {
 	private PlayerId lastPlayedPlayer;
 
 	private final Map<PlayerId, Card> trickPot = new HashMap<>();
-	private final Game game;
+	private final GameId gameId;
 
-	public Trick(PlayerId trickInitiator, Game game) {
+	public Trick(PlayerId trickInitiator, GameId gameId) {
 		this.trickInitiator = trickInitiator;
-		this.game = game;
+		this.gameId = gameId;
 	}
 
-	public void playCard(Card cardToPlay, PlayerId playerId) {
+	public void playCard(Card cardToPlay, PlayerId playerId, SittingOrder sittingOrder) {
 		if (trickPot.size() >= 4) {
 			throw new IllegalStateException("Trick contains already " + trickPot.size() + " cards.");
 		}
@@ -27,7 +27,7 @@ public class Trick {
 
 		PlayerId nextPlayerIdToPlay = lastPlayedPlayer == null
 				? trickInitiator
-				: game.nextPlayerAfter(lastPlayedPlayer);
+				: sittingOrder.nextPlayerAfter(lastPlayedPlayer);
 
 		if (!nextPlayerIdToPlay.equals(playerId)) {
 			throw new IllegalArgumentException("Current playerId=" + playerId +

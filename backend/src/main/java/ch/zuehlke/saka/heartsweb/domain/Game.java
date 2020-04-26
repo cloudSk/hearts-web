@@ -28,10 +28,11 @@ public class Game {
 	    playerIds.add(player.id());
 	}
 
-	public PlayerId nextPlayerAfter(PlayerId playerId) {
-		int currentIndex = playerIds.indexOf(playerId);
-		int nextIndex = (currentIndex + 1) % MAX_PLAYER_AMOUNT;
+	public SittingOrder sittingOrder() {
+    	if (playerIds.size() != 4) {
+		    throw new IllegalStateException("Sitting order can currently only be determined, if all players joined the game");
+	    }
 
-		return playerIds.get(nextIndex);
+		return new SittingOrder(playerIds.get(0), playerIds.get(1), playerIds.get(2), playerIds.get(3));
 	}
 }

@@ -37,10 +37,11 @@ public class PlayerTest {
 
 	@Test
 	public void playCardToRound_sameCardTwice_throwsIllegalArgumentException() {
-		Player testee = new Player("Player");
+		Game game = GameFixture.gameWith4Players();
+		Player testee = new Player(game.sittingOrder().north(), "Player");
 		Card card = new Card(CardColor.HEARTS, CardRank.ACE);
 		testee.assignHand(Arrays.asList(card));
-		Round round = new Round(new Game(), testee.id());
+		Round round = new Round(game.id(), testee.id(), game.sittingOrder());
 
 		testee.playCardToRound(card, round);
 		Throwable result = catchThrowable(() -> testee.playCardToRound(card, round));

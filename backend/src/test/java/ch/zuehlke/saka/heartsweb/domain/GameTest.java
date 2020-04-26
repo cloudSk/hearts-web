@@ -34,30 +34,4 @@ public class GameTest {
 
 		assertThat(result).isInstanceOf(IllegalArgumentException.class);
 	}
-
-	@Test
-	public void nextPlayerAfter_firstPlayer_returnsSecondPlayer() {
-		Game testee = new Game();
-		testee.joinGame(FIRST_PLAYER);
-		testee.joinGame(SECOND_PLAYER);
-		testee.joinGame(THIRD_PLAYER);
-		testee.joinGame(FOURTH_PLAYER);
-
-		PlayerId result = testee.nextPlayerAfter(FIRST_PLAYER.id());
-
-		assertThat(result).isEqualTo(SECOND_PLAYER.id());
-	}
-
-	@Test
-	public void nextPlayerAfter_lastPlayer_returnsFirstPlayer() {
-		Game testee = new Game();
-		testee.joinGame(FIRST_PLAYER);
-		testee.joinGame(SECOND_PLAYER);
-		testee.joinGame(THIRD_PLAYER);
-		testee.joinGame(FOURTH_PLAYER);
-
-		PlayerId result = testee.nextPlayerAfter(FOURTH_PLAYER.id());
-
-		assertThat(result).isEqualTo(FIRST_PLAYER.id());
-	}
 }
