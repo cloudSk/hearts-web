@@ -17,7 +17,7 @@ public class Trick {
 	}
 
 	public void playCard(Card cardToPlay, PlayerId playerId, SittingOrder sittingOrder) {
-		if (trickPot.size() >= 4) {
+		if (isFinished()) {
 			throw new IllegalStateException("Trick contains already " + trickPot.size() + " cards.");
 		}
 		if (trickPot.containsKey(playerId)) {
@@ -25,10 +25,7 @@ public class Trick {
 					" already played a card in this trick");
 		}
 
-		PlayerId nextPlayerIdToPlay = lastPlayedPlayer == null
-				? trickInitiator
-				: sittingOrder.nextPlayerAfter(lastPlayedPlayer);
-
+		PlayerId nextPlayerIdToPlay = nextPlayer(sittingOrder);
 		if (!nextPlayerIdToPlay.equals(playerId)) {
 			throw new IllegalArgumentException("Current playerId=" + playerId +
 					" does not match nextPlayerId=" + nextPlayerIdToPlay + " to play a card.");
@@ -39,6 +36,10 @@ public class Trick {
 	}
 
 	public PlayerId determineWinner() {
+		if (!isFinished()) {
+			throw new IllegalStateException("Current trick is not finished yet.");
+		}
+
 		CardColor trickInitiationColor = trickPot.get(trickInitiator).cardColor();
 
 		return trickPot.entrySet().stream()
@@ -58,4 +59,14 @@ public class Trick {
 
 	    return numberOfHeartsCards + spadesPoints;
     }
+
+    public boolean isFinished() {
+	    return trickPot.size() >= Game.PLAYERS_PER_GAME;
+    }
+
+	public PlayerId nextPlayer(SittingOrder sittingOrder) {
+		return lastPlayedPlayer == null
+				? trickInitiator
+				: sittingOrder.nextPlayerAfter(lastPlayedPlayer);
+	}
 }

@@ -44,4 +44,25 @@ public class Player {
 		hand.clear();
 		hand.addAll(cardsInHand);
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null) {
+			return false;
+		}
+		if (getClass() != o.getClass()) {
+			return false;
+		}
+
+		Player player = (Player) o;
+		return id.equals(player.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
 }

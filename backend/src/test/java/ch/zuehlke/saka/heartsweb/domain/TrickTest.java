@@ -7,27 +7,27 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 
 public class TrickTest {
 	private static final Game GAME = GameFixture.gameWith4Players();
-	private static final PlayerId FIRST_PLAYER = GAME.sittingOrder().north();
-	private static final PlayerId SECOND_PLAYER = GAME.sittingOrder().east();
-	private static final PlayerId THIRD_PLAYER = GAME.sittingOrder().south();
-	private static final PlayerId FOURTH_PLAYER = GAME.sittingOrder().west();
+	private static final SittingOrder SITTING_ORDER = GAME.sittingOrder();
+	private static final PlayerId FIRST_PLAYER = SITTING_ORDER.north();
+	private static final PlayerId SECOND_PLAYER = SITTING_ORDER.east();
+	private static final PlayerId THIRD_PLAYER = SITTING_ORDER.south();
+	private static final PlayerId FOURTH_PLAYER = SITTING_ORDER.west();
 
 	@Test
 	public void playCard_4CardsInCorrectPlayerOrder_winnerCanBeDetermined() {
-		SittingOrder sittingOrder = GAME.sittingOrder();
 		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
 
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.JACK), THIRD_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_10), FOURTH_PLAYER, sittingOrder);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.JACK), THIRD_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_10), FOURTH_PLAYER, SITTING_ORDER);
 
 		PlayerId result = testee.determineWinner();
 		assertThat(result).isNotNull();
 	}
 
 	@Test
-	public void playCard_playerPlays2CardsIntoTrick_throwsIllegalArgumentException() {
+	public void playCard_samePlayerPlays2CardsIntoTrick_throwsIllegalArgumentException() {
 		PlayerId playerId = PlayerId.generate();
 		Trick testee = new Trick(playerId, new Game().id());
 		Card card = new Card(CardColor.DIAMONDS, CardRank.KING);
@@ -40,15 +40,14 @@ public class TrickTest {
 
 	@Test
 	public void playCard_5CardsIntoTrick_throwsIllegalStateException() {
-		SittingOrder sittingOrder = GAME.sittingOrder();
 		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.JACK), THIRD_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_10), FOURTH_PLAYER, sittingOrder);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.JACK), THIRD_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_10), FOURTH_PLAYER, SITTING_ORDER);
 
 		Throwable result = catchThrowable(
-				() -> testee.playCard(new Card(CardColor.DIAMONDS, CardRank.ACE), PlayerId.generate(), sittingOrder)
+				() -> testee.playCard(new Card(CardColor.DIAMONDS, CardRank.ACE), PlayerId.generate(), SITTING_ORDER)
 		);
 
 		assertThat(result).isInstanceOf(IllegalStateException.class);
@@ -56,12 +55,11 @@ public class TrickTest {
 
 	@Test
 	public void playCard_wrongPlayerPlaysCardIntoTrick_throwsIllegalArgumentException() {
-		SittingOrder sittingOrder = GAME.sittingOrder();
 		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
 
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, sittingOrder);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
 		Throwable result = catchThrowable(
-				() -> testee.playCard(new Card(CardColor.DIAMONDS, CardRank.ACE), FOURTH_PLAYER, sittingOrder)
+				() -> testee.playCard(new Card(CardColor.DIAMONDS, CardRank.ACE), FOURTH_PLAYER, SITTING_ORDER)
 		);
 
 		assertThat(result).isInstanceOf(IllegalArgumentException.class);
@@ -69,13 +67,12 @@ public class TrickTest {
 
 	@Test
 	public void determineWinner_allPlayersPlayedTheSameCardColor_highestCardWins() {
-		SittingOrder sittingOrder = GAME.sittingOrder();
 		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
 
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.JACK), THIRD_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_10), FOURTH_PLAYER, sittingOrder);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.JACK), THIRD_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_10), FOURTH_PLAYER, SITTING_ORDER);
 		PlayerId result = testee.determineWinner();
 
 		assertThat(result).isEqualTo(THIRD_PLAYER);
@@ -83,13 +80,12 @@ public class TrickTest {
 
 	@Test
 	public void determineWinner_2PlayersPlayedTheSameCardColor_highestCardOfInitialColorWins() {
-		SittingOrder sittingOrder = GAME.sittingOrder();
 		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
 
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.HEARTS, CardRank.JACK), THIRD_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_10), FOURTH_PLAYER, sittingOrder);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.JACK), THIRD_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_10), FOURTH_PLAYER, SITTING_ORDER);
 		PlayerId result = testee.determineWinner();
 
 		assertThat(result).isEqualTo(FOURTH_PLAYER);
@@ -97,16 +93,27 @@ public class TrickTest {
 
 	@Test
 	public void determineWinner_noPlayerPlayedTheSameCardColor_initiatorWins() {
-		SittingOrder sittingOrder = GAME.sittingOrder();
 		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
 
-		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.HEARTS, CardRank.NUMBER_08), SECOND_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.HEARTS, CardRank.JACK), THIRD_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.HEARTS, CardRank.NUMBER_10), FOURTH_PLAYER, sittingOrder);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.NUMBER_08), SECOND_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.JACK), THIRD_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.NUMBER_10), FOURTH_PLAYER, SITTING_ORDER);
 		PlayerId result = testee.determineWinner();
 
 		assertThat(result).isEqualTo(FIRST_PLAYER);
+	}
+
+	@Test
+	public void determineWinner_3cardsPlayed_throwsIllegalStateException() {
+		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.ACE), FIRST_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.JACK), SECOND_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.QUEEN), THIRD_PLAYER, SITTING_ORDER);
+		Throwable result = catchThrowable(testee::determineWinner);
+
+		assertThat(result).isInstanceOf(IllegalStateException.class);
 	}
 
 	@Test
@@ -131,13 +138,12 @@ public class TrickTest {
 
 	@Test
 	public void determinePoints_trickContainsSpadesQueenAnd3CardsOfColorHearts_returns16() {
-		SittingOrder sittingOrder = GAME.sittingOrder();
 		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
 
-		testee.playCard(new Card(CardColor.SPADES, CardRank.QUEEN), FIRST_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.HEARTS, CardRank.ACE), SECOND_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.HEARTS, CardRank.KING), THIRD_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.HEARTS, CardRank.NUMBER_02), FOURTH_PLAYER, sittingOrder);
+		testee.playCard(new Card(CardColor.SPADES, CardRank.QUEEN), FIRST_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.ACE), SECOND_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.KING), THIRD_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.HEARTS, CardRank.NUMBER_02), FOURTH_PLAYER, SITTING_ORDER);
 		int result = testee.determinePoints();
 
 		assertThat(result).isEqualTo(16);
@@ -145,13 +151,12 @@ public class TrickTest {
 
 	@Test
 	public void determinePoints_trickContainsNoPoints_returns0() {
-		SittingOrder sittingOrder = GAME.sittingOrder();
 		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
 
-		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), FIRST_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.SPADES, CardRank.KING), SECOND_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.SPADES, CardRank.JACK), THIRD_PLAYER, sittingOrder);
-		testee.playCard(new Card(CardColor.CLUBS, CardRank.QUEEN), FOURTH_PLAYER, sittingOrder);
+		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), FIRST_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.SPADES, CardRank.KING), SECOND_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.SPADES, CardRank.JACK), THIRD_PLAYER, SITTING_ORDER);
+		testee.playCard(new Card(CardColor.CLUBS, CardRank.QUEEN), FOURTH_PLAYER, SITTING_ORDER);
 		int result = testee.determinePoints();
 
 		assertThat(result).isEqualTo(0);

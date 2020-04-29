@@ -33,6 +33,11 @@ public class PlayerInMemoryRepository implements PlayerRepository {
 		});
 	}
 
+	@Override
+	public void update(Player player) {
+		// Nothing to do in the in memory implementation
+	}
+
 	private List<Player> listOf(Player player) {
 		List<Player> playerList = new ArrayList<>();
 		playerList.add(player);

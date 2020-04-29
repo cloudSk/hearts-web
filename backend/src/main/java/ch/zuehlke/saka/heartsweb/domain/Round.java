@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Round {
-	private static final int CARDS_PER_TRICK = 4;
+	private static final int CARDS_PER_TRICK = Game.PLAYERS_PER_GAME;
 	private static final int CARDS_PER_ROUND = CARDS_PER_TRICK * 13;
 
 	private final List<Trick> tricks = new ArrayList<>();
@@ -39,12 +39,26 @@ public class Round {
 		heartsColorPlayed = Boolean.logicalOr(heartsColorPlayed, card.cardColor() == CardColor.HEARTS);
 	}
 
+	public PlayerId nextPlayer() {
+		if (tricks.isEmpty()) {
+			return roundInitiator;
+		}
+
+		int trickIndex = currentCardIndex / CARDS_PER_TRICK;
+		Trick currentTrick = tricks.get(trickIndex);
+		return currentTrick.nextPlayer(sittingOrder);
+	}
+
 	public boolean heartsColorPlayed() {
 		return heartsColorPlayed;
 	}
 
 	public boolean roundFinished() {
 		return (currentCardIndex + 1) >= CARDS_PER_ROUND;
+	}
+
+	public SittingOrder sittingOrder() {
+		return sittingOrder;
 	}
 
 	private void createNewTrick() {
@@ -57,9 +71,5 @@ public class Round {
 		PlayerId newTrickInitiator = lastTrick.determineWinner();
 		Trick newTrick = new Trick(newTrickInitiator, gameId);
 		tricks.add(newTrick);
-	}
-
-	public SittingOrder sittingOrder() {
-		return sittingOrder;
 	}
 }

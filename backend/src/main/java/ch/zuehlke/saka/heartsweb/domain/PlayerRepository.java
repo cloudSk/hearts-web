@@ -9,4 +9,6 @@ public interface PlayerRepository {
 	Optional<Player> findById(GameId gameId, PlayerId playerId);
 
 	void add(GameId gameId, Player player);
+
+	void update(Player player);
 }
