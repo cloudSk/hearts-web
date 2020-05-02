@@ -36,8 +36,8 @@ public class RoundCreationService {
 
 		RoundId roundId = RoundId.generate();
 		assignRandomHands(players, roundId);
-
 		Player roundInitiator = determineRoundInitiator(players, roundId);
+
 		Round round = new Round(roundId, game.id(), roundInitiator.id(), game.sittingOrder());
 		roundRepository.add(round);
 

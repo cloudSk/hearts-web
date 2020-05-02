@@ -19,8 +19,17 @@ The order in which the players play one card remains the same throughout the who
 A round consists of 13 tricks.
 
 ## Game (entity)
-The game defines the order of players.
-Players join a game.
+The game defines the sitting order of players.<br/>
+Players join a game.<br/>
+Multiple rounds can be played in a game.
+
+## SittingOrder (value object)
+The order of players around a virtual table: north, east, south and west.
+The sitting order determines which player is up next to play a card, determined by the previous player(id).
+
+## RoundCreationService (domain service)
+Domain service to create a new round: each player gets 13 different cards assigned as his 'hand'.<br/>
+The new round is added to the given game as the active round.
 
 ## RoundOrchestrationService (domain service)
 Domain service to orchestrate the cards played by the different players. <br/>

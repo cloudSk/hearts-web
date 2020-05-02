@@ -33,7 +33,7 @@ public class Round {
 
 	public void playCard(Card card, PlayerId playerId) {
 		if (roundFinished()) {
-			throw new IllegalStateException("Round already finished");
+			throw new IllegalStateException("Round with id=" + id() + " is already finished");
 		}
 
 		++currentCardIndex;

@@ -27,4 +27,9 @@ public class GameInMemoryRepository implements GameRepository {
 	public void add(Game game) {
 		games.add(game);
 	}
+
+	@Override
+	public void update(Game game) {
+		// nothing to do in the in-memory implementation
+	}
 }
