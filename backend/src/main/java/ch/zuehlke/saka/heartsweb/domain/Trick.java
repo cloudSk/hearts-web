@@ -9,11 +9,9 @@ public class Trick {
 	private PlayerId lastPlayedPlayer;
 
 	private final Map<PlayerId, Card> trickPot = new HashMap<>();
-	private final GameId gameId;
 
-	public Trick(PlayerId trickInitiator, GameId gameId) {
+	public Trick(PlayerId trickInitiator) {
 		this.trickInitiator = trickInitiator;
-		this.gameId = gameId;
 	}
 
 	public void playCard(Card cardToPlay, PlayerId playerId, SittingOrder sittingOrder) {

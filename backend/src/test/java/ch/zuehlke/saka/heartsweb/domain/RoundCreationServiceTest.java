@@ -45,8 +45,9 @@ public class RoundCreationServiceTest {
 
 		assertThat(result).isNotNull();
 		assertThat(result.sittingOrder()).isEqualTo(game.sittingOrder());
-		assertUniqueHands(playerRepository.findAllInGame(game.id()));
-		assertThat(result.nextPlayer()).isEqualTo(playerWithClubs2(playerRepository.findAllInGame(game.id())));
+		assertUniqueHands(playerRepository.findAllInGame(game.id()), result.id());
+		assertThat(result.nextPlayer())
+				.isEqualTo(playerWithClubs2(playerRepository.findAllInGame(game.id()), result.id()));
 		verify(playerRepository, times(4)).update(any());
 		verify(roundRepository).add(any());
 	}
@@ -79,22 +80,23 @@ public class RoundCreationServiceTest {
 		return mock;
 	}
 
-	private PlayerId playerWithClubs2(List<Player> players) {
+	private PlayerId playerWithClubs2(List<Player> players, RoundId roundId) {
+		Card clubs2 = new Card(CardColor.CLUBS, CardRank.NUMBER_02);
 		return players.stream()
-				.filter(player -> player.remainingHand().contains(new Card(CardColor.CLUBS, CardRank.NUMBER_02)))
+				.filter(player -> player.remainingHand(roundId).contains(clubs2))
 				.findFirst()
 				.orElseThrow(() -> new IllegalStateException("No player owns clubs 2"))
 				.id();
 	}
 
-	private void assertUniqueHands(List<Player> players) {
+	private void assertUniqueHands(List<Player> players, RoundId roundId) {
 		assertThat(players).hasSize(4);
-		assertThat(players).allMatch(player -> player.remainingHand().size() == 13);
+		assertThat(players).allMatch(player -> player.remainingHand(roundId).size() == 13);
 
-		List<Card> first = players.get(0).remainingHand();
-		List<Card> second = players.get(1).remainingHand();
-		List<Card> third = players.get(2).remainingHand();
-		List<Card> fourth = players.get(3).remainingHand();
+		List<Card> first = players.get(0).remainingHand(roundId);
+		List<Card> second = players.get(1).remainingHand(roundId);
+		List<Card> third = players.get(2).remainingHand(roundId);
+		List<Card> fourth = players.get(3).remainingHand(roundId);
 
 		assertThat(first).doesNotContainAnyElementsOf(joinLists(second, third, fourth));
 		assertThat(second).doesNotContainAnyElementsOf(joinLists(first, third, fourth));

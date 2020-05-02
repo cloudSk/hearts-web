@@ -15,7 +15,7 @@ public class TrickTest {
 
 	@Test
 	public void playCard_4CardsInCorrectPlayerOrder_winnerCanBeDetermined() {
-		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+		Trick testee = new Trick(FIRST_PLAYER);
 
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, SITTING_ORDER);
@@ -29,7 +29,7 @@ public class TrickTest {
 	@Test
 	public void playCard_samePlayerPlays2CardsIntoTrick_throwsIllegalArgumentException() {
 		PlayerId playerId = PlayerId.generate();
-		Trick testee = new Trick(playerId, new Game().id());
+		Trick testee = new Trick(playerId);
 		Card card = new Card(CardColor.DIAMONDS, CardRank.KING);
 
 		testee.playCard(card, playerId, null);
@@ -40,7 +40,7 @@ public class TrickTest {
 
 	@Test
 	public void playCard_5CardsIntoTrick_throwsIllegalStateException() {
-		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+		Trick testee = new Trick(FIRST_PLAYER);
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, SITTING_ORDER);
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.JACK), THIRD_PLAYER, SITTING_ORDER);
@@ -55,7 +55,7 @@ public class TrickTest {
 
 	@Test
 	public void playCard_wrongPlayerPlaysCardIntoTrick_throwsIllegalArgumentException() {
-		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+		Trick testee = new Trick(FIRST_PLAYER);
 
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
 		Throwable result = catchThrowable(
@@ -67,7 +67,7 @@ public class TrickTest {
 
 	@Test
 	public void determineWinner_allPlayersPlayedTheSameCardColor_highestCardWins() {
-		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+		Trick testee = new Trick(FIRST_PLAYER);
 
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, SITTING_ORDER);
@@ -80,7 +80,7 @@ public class TrickTest {
 
 	@Test
 	public void determineWinner_2PlayersPlayedTheSameCardColor_highestCardOfInitialColorWins() {
-		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+		Trick testee = new Trick(FIRST_PLAYER);
 
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_08), SECOND_PLAYER, SITTING_ORDER);
@@ -93,7 +93,7 @@ public class TrickTest {
 
 	@Test
 	public void determineWinner_noPlayerPlayedTheSameCardColor_initiatorWins() {
-		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+		Trick testee = new Trick(FIRST_PLAYER);
 
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.NUMBER_09), FIRST_PLAYER, SITTING_ORDER);
 		testee.playCard(new Card(CardColor.HEARTS, CardRank.NUMBER_08), SECOND_PLAYER, SITTING_ORDER);
@@ -106,7 +106,7 @@ public class TrickTest {
 
 	@Test
 	public void determineWinner_3cardsPlayed_throwsIllegalStateException() {
-		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+		Trick testee = new Trick(FIRST_PLAYER);
 
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.ACE), FIRST_PLAYER, SITTING_ORDER);
 		testee.playCard(new Card(CardColor.DIAMONDS, CardRank.JACK), SECOND_PLAYER, SITTING_ORDER);
@@ -118,7 +118,7 @@ public class TrickTest {
 
 	@Test
 	public void determinePoints_trickContainsOneCardOfColorHearts_returns1() {
-		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+		Trick testee = new Trick(FIRST_PLAYER);
 
 		testee.playCard(new Card(CardColor.HEARTS, CardRank.NUMBER_08), FIRST_PLAYER, null);
 		int result = testee.determinePoints();
@@ -128,7 +128,7 @@ public class TrickTest {
 
 	@Test
 	public void determinePoints_trickContainsSpadesQueen_returns13() {
-		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+		Trick testee = new Trick(FIRST_PLAYER);
 
 		testee.playCard(new Card(CardColor.SPADES, CardRank.QUEEN), FIRST_PLAYER, null);
 		int result = testee.determinePoints();
@@ -138,7 +138,7 @@ public class TrickTest {
 
 	@Test
 	public void determinePoints_trickContainsSpadesQueenAnd3CardsOfColorHearts_returns16() {
-		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+		Trick testee = new Trick(FIRST_PLAYER);
 
 		testee.playCard(new Card(CardColor.SPADES, CardRank.QUEEN), FIRST_PLAYER, SITTING_ORDER);
 		testee.playCard(new Card(CardColor.HEARTS, CardRank.ACE), SECOND_PLAYER, SITTING_ORDER);
@@ -151,7 +151,7 @@ public class TrickTest {
 
 	@Test
 	public void determinePoints_trickContainsNoPoints_returns0() {
-		Trick testee = new Trick(FIRST_PLAYER, GAME.id());
+		Trick testee = new Trick(FIRST_PLAYER);
 
 		testee.playCard(new Card(CardColor.SPADES, CardRank.ACE), FIRST_PLAYER, SITTING_ORDER);
 		testee.playCard(new Card(CardColor.SPADES, CardRank.KING), SECOND_PLAYER, SITTING_ORDER);

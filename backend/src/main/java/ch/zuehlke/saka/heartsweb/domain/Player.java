@@ -1,13 +1,11 @@
 package ch.zuehlke.saka.heartsweb.domain;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Player {
 	private final PlayerId id;
 	private String name;
-	private final List<Card> hand;
+	private final Map<RoundId, List<Card>> hands;
 
 	public Player(String name) {
 		this(PlayerId.generate(), name);
@@ -16,7 +14,7 @@ public class Player {
 	public Player(PlayerId id, String name) {
 		this.id = id;
 		this.name = name;
-		this.hand = new ArrayList<>();
+		this.hands = new HashMap<>();
 	}
 
 	public PlayerId id() {
@@ -27,11 +25,12 @@ public class Player {
 		return name;
 	}
 
-	public List<Card> remainingHand() {
-		return Collections.unmodifiableList(hand);
+	public List<Card> remainingHand(RoundId roundId) {
+		return Collections.unmodifiableList(handOfRound(roundId));
 	}
 
 	void playCardToRound(Card cardToPlay, Round round) {
+		List<Card> hand = handOfRound(round.id());
 		if (!hand.contains(cardToPlay)) {
 			throw new IllegalArgumentException("Card=" + cardToPlay + " is not in current hand of playerId=" + id);
 		}
@@ -40,7 +39,8 @@ public class Player {
 		round.playCard(cardToPlay, id);
 	}
 
-	void assignHand(List<Card> cardsInHand) {
+	void assignHand(List<Card> cardsInHand, RoundId roundId) {
+		List<Card> hand = handOfRound(roundId);
 		hand.clear();
 		hand.addAll(cardsInHand);
 	}
@@ -64,5 +64,10 @@ public class Player {
 	@Override
 	public int hashCode() {
 		return id.hashCode();
+	}
+
+	private List<Card> handOfRound(RoundId roundId) {
+		hands.putIfAbsent(roundId, new ArrayList<>());
+		return hands.get(roundId);
 	}
 }

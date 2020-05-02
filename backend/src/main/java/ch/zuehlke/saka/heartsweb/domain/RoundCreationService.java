@@ -34,34 +34,35 @@ public class RoundCreationService {
 			throw new IllegalStateException(message);
 		}
 
-		assignRandomHands(players);
+		RoundId roundId = RoundId.generate();
+		assignRandomHands(players, roundId);
 
-		Player roundInitiator = determineRoundInitiator(players);
-		Round round = new Round(game.id(), roundInitiator.id(), game.sittingOrder());
+		Player roundInitiator = determineRoundInitiator(players, roundId);
+		Round round = new Round(roundId, game.id(), roundInitiator.id(), game.sittingOrder());
 		roundRepository.add(round);
 
 		return round;
 	}
 
-	private void assignRandomHands(List<Player> players) {
+	private void assignRandomHands(List<Player> players, RoundId roundId) {
 		List<List<Card>> hands = createRandomHands();
 		IntStream.range(0, Game.PLAYERS_PER_GAME).forEach(index -> {
 			List<Card> cardsInHand = hands.get(index);
-			players.get(index).assignHand(cardsInHand);
+			players.get(index).assignHand(cardsInHand, roundId);
 		});
 
 		players.forEach(playerRepository::update);
 	}
 
-	private Player determineRoundInitiator(List<Player> players) {
+	private Player determineRoundInitiator(List<Player> players, RoundId roundId) {
 		return players.stream()
-				.filter(this::holdsClubsNumber2)
+				.filter(player -> holdsClubsNumber2(player, roundId))
 				.findFirst()
 				.orElseThrow(() -> new IllegalStateException("No player holds clubs 2"));
 	}
 
-	private boolean holdsClubsNumber2(Player player) {
-		return player.remainingHand().stream()
+	private boolean holdsClubsNumber2(Player player, RoundId roundId) {
+		return player.remainingHand(roundId).stream()
 				.anyMatch(card -> card.cardColor() == CardColor.CLUBS &&
 						card.cardRank() == CardRank.NUMBER_02);
 	}

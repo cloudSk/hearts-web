@@ -7,6 +7,7 @@ public class Round {
 	private static final int CARDS_PER_TRICK = Game.PLAYERS_PER_GAME;
 	private static final int CARDS_PER_ROUND = CARDS_PER_TRICK * 13;
 
+	private final RoundId roundId;
 	private final List<Trick> tricks = new ArrayList<>();
 	private final GameId gameId;
 	private final PlayerId roundInitiator;
@@ -16,9 +17,18 @@ public class Round {
 	private int currentCardIndex = -1;
 
 	public Round(GameId gameId, PlayerId roundInitiator, SittingOrder sittingOrder) {
+		this(RoundId.generate(), gameId, roundInitiator, sittingOrder);
+	}
+
+	Round(RoundId roundId, GameId gameId, PlayerId roundInitiator, SittingOrder sittingOrder) {
+		this.roundId = roundId;
 		this.gameId = gameId;
 		this.roundInitiator = roundInitiator;
 		this.sittingOrder = sittingOrder;
+	}
+
+	public RoundId id() {
+		return roundId;
 	}
 
 	public void playCard(Card card, PlayerId playerId) {
@@ -61,15 +71,36 @@ public class Round {
 		return sittingOrder;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null) {
+			return false;
+		}
+		if (getClass() != o.getClass()) {
+			return false;
+		}
+
+		Round round = (Round) o;
+		return roundId.equals(round.roundId);
+	}
+
+	@Override
+	public int hashCode() {
+		return roundId.hashCode();
+	}
+
 	private void createNewTrick() {
 		if (tricks.isEmpty()) {
-			tricks.add(new Trick(roundInitiator, gameId));
+			tricks.add(new Trick(roundInitiator));
 			return;
 		}
 
 		Trick lastTrick = tricks.get(tricks.size() - 1);
 		PlayerId newTrickInitiator = lastTrick.determineWinner();
-		Trick newTrick = new Trick(newTrickInitiator, gameId);
+		Trick newTrick = new Trick(newTrickInitiator);
 		tricks.add(newTrick);
 	}
 }

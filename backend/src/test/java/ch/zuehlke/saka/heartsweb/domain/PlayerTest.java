@@ -7,8 +7,7 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class PlayerTest {
 
@@ -16,21 +15,22 @@ public class PlayerTest {
 	public void playCardToRound_cardAvailableInHand_cardPlayedToTrick() {
 		Player testee = new Player("Player");
 		Card card = new Card(CardColor.HEARTS, CardRank.ACE);
-		testee.assignHand(Arrays.asList(card));
-		Round roundMock = mock(Round.class);
+		Round round = roundMock();
+		testee.assignHand(Arrays.asList(card), round.id());
 
-		testee.playCardToRound(card, roundMock);
+		testee.playCardToRound(card, round);
 
-		verify(roundMock).playCard(card, testee.id());
+		verify(round).playCard(card, testee.id());
 	}
 
 	@Test
 	public void playCardToRound_emptyHand_throwsIllegalArgumentException() {
+		Round round = roundMock();
 		Player testee = new Player("Player");
-		testee.assignHand(new ArrayList<>());
+		testee.assignHand(new ArrayList<>(), round.id());
 		Card card = new Card(CardColor.HEARTS, CardRank.ACE);
 
-		Throwable result = catchThrowable(() -> testee.playCardToRound(card, null));
+		Throwable result = catchThrowable(() -> testee.playCardToRound(card, round));
 
 		assertThat(result).isInstanceOf(IllegalArgumentException.class);
 	}
@@ -40,12 +40,18 @@ public class PlayerTest {
 		Game game = GameFixture.gameWith4Players();
 		Player testee = new Player(game.sittingOrder().north(), "Player");
 		Card card = new Card(CardColor.HEARTS, CardRank.ACE);
-		testee.assignHand(Arrays.asList(card));
 		Round round = new Round(game.id(), testee.id(), game.sittingOrder());
+		testee.assignHand(Arrays.asList(card), round.id());
 
 		testee.playCardToRound(card, round);
 		Throwable result = catchThrowable(() -> testee.playCardToRound(card, round));
 
 		assertThat(result).isInstanceOf(IllegalArgumentException.class);
+	}
+
+	private Round roundMock() {
+		Round mock = mock(Round.class);
+		when(mock.id()).thenReturn(RoundId.generate());
+		return mock;
 	}
 }
