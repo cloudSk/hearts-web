@@ -9,10 +9,10 @@ import java.util.*;
 
 @Repository
 public class GameInMemoryRepository implements GameRepository {
-	private final List<Game> games = new ArrayList<>();
+	private final Set<Game> games = new HashSet<>();
 
 	@Override
-	public List<Game> findAll() {
+	public Set<Game> findAll() {
 		return games;
 	}
 

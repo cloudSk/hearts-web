@@ -35,8 +35,8 @@ public class Player {
 			throw new IllegalArgumentException("Card=" + cardToPlay + " is not in current hand of playerId=" + id);
 		}
 
-		hand.remove(cardToPlay);
 		round.playCard(cardToPlay, id);
+		hand.remove(cardToPlay);
 	}
 
 	void assignHand(List<Card> cardsInHand, RoundId roundId) {

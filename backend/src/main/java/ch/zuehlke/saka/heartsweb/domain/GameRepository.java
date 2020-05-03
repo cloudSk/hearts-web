@@ -1,10 +1,10 @@
 package ch.zuehlke.saka.heartsweb.domain;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface GameRepository {
-	List<Game> findAll();
+	Set<Game> findAll();
 
 	Optional<Game> findById(GameId gameId);
 
