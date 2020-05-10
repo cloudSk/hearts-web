@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/games/{gameIdParameter}/players", produces = MediaTypes.HAL_JSON_UTF8_VALUE)
 public class PlayersResource {
+	public static final String SESSION_PLAYER_ID_ATTRIBUTE = "SESSION_PLAYER_ID";
 	private static final Logger LOGGER = LoggerFactory.getLogger(PlayersResource.class);
 
 	private final PlayerResourceAssembler playerResourceAssembler;
@@ -59,7 +61,8 @@ public class PlayersResource {
 	}
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Resource<PlayerDto>> add(@PathVariable String gameIdParameter, @RequestBody PlayerDto playerDto) {
+	public ResponseEntity<Resource<PlayerDto>> add(@PathVariable String gameIdParameter, HttpSession session,
+	                                               @RequestBody PlayerDto playerDto) {
 		LOGGER.debug("add gameId={}, playerName={}", gameIdParameter, playerDto.getName());
 
 		GameId gameId = GameId.of(gameIdParameter);
@@ -70,6 +73,7 @@ public class PlayersResource {
 
 		Player player = map(playerDto);
 		playerJoiningService.joinGame(player, game.get());
+		session.setAttribute(SESSION_PLAYER_ID_ATTRIBUTE, player.id());
 
 		Resource<PlayerDto> resource = playerResourceAssembler.toResource(Pair.of(gameId, player));
 		return ResponseEntity

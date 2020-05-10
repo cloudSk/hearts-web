@@ -1,15 +1,18 @@
 package ch.zuehlke.saka.heartsweb.presentation.resources.round;
 
 import ch.zuehlke.saka.heartsweb.domain.*;
+import ch.zuehlke.saka.heartsweb.presentation.resources.player.PlayersResource;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.net.URI;
 import java.util.Optional;
 
@@ -66,5 +69,35 @@ public class RoundResource {
 		return ResponseEntity
 				.created(URI.create(resource.getId().getHref()))
 				.body(resource);
+	}
+
+	@DeleteMapping(path = "/{roundIdParameter}/cards", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Resource<RoundDto>> playCard(@PathVariable String gameIdParameter,
+	                                                   @PathVariable String roundIdParameter, HttpSession session,
+	                                                   @RequestBody CardDto cardToPlay) {
+		LOGGER.debug("playCard gameId={}, roundId={}, card={}:{}", gameIdParameter, roundIdParameter,
+				cardToPlay.getColor(), cardToPlay.getRank());
+
+		PlayerId sessionPlayerId = (PlayerId) session.getAttribute(PlayersResource.SESSION_PLAYER_ID_ATTRIBUTE);
+		if (sessionPlayerId == null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
+
+		GameId gameId = GameId.of(gameIdParameter);
+		RoundId roundId = RoundId.of(roundIdParameter);
+
+		Optional<Game> game = gameRepository.findById(gameId);
+		Optional<Round> round = roundRepository.findById(roundId);
+		if (!game.isPresent() || !round.isPresent()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		roundOrchestrationService.playCard(gameId, sessionPlayerId, roundId, map(cardToPlay));
+		return ResponseEntity
+				.ok(roundResourceAssembler.toResource(Pair.of(gameId, round.get())));
+	}
+
+	private Card map(CardDto cardDto) {
+		return new Card(cardDto.getColor(), cardDto.getRank());
 	}
 }
