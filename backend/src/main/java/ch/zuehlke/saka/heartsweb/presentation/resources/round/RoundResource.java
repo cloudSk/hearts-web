@@ -3,10 +3,12 @@ package ch.zuehlke.saka.heartsweb.presentation.resources.round;
 import ch.zuehlke.saka.heartsweb.domain.*;
 import ch.zuehlke.saka.heartsweb.presentation.resources.player.PlayersResource;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +24,19 @@ public class RoundResource {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RoundResource.class);
 
 	private final RoundResourceAssembler roundResourceAssembler;
+	private final CardResourcesAssembler cardResourcesAssembler;
 	private final GameRepository gameRepository;
 	private final PlayerRepository playerRepository;
 	private final RoundRepository roundRepository;
 	private final RoundCreationService roundCreationService;
 	private final RoundOrchestrationService roundOrchestrationService;
 
-	public RoundResource(RoundResourceAssembler roundResourceAssembler, GameRepository gameRepository,
-	                     PlayerRepository playerRepository, RoundRepository roundRepository,
-	                     RoundCreationService roundCreationService,
+	public RoundResource(RoundResourceAssembler roundResourceAssembler, CardResourcesAssembler cardResourcesAssembler,
+	                     GameRepository gameRepository, PlayerRepository playerRepository,
+	                     RoundRepository roundRepository, RoundCreationService roundCreationService,
 	                     RoundOrchestrationService roundOrchestrationService) {
 		this.roundResourceAssembler = roundResourceAssembler;
+		this.cardResourcesAssembler = cardResourcesAssembler;
 		this.gameRepository = gameRepository;
 		this.playerRepository = playerRepository;
 		this.roundRepository = roundRepository;
@@ -54,12 +58,12 @@ public class RoundResource {
 	}
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Resource<RoundDto>> add(@PathVariable String gameIdParameter) {
+	public ResponseEntity<Resource<RoundDto>> addRound(@PathVariable String gameIdParameter) {
 		LOGGER.debug("add gameId={}", gameIdParameter);
 
 		GameId gameId = GameId.of(gameIdParameter);
 		Optional<Game> game = gameRepository.findById(gameId);
-		if (!game.isPresent()) {
+		if (game.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 
@@ -69,6 +73,27 @@ public class RoundResource {
 		return ResponseEntity
 				.created(URI.create(resource.getId().getHref()))
 				.body(resource);
+	}
+
+	@GetMapping("/{roundIdParameter}/cards")
+	public ResponseEntity<Resources<Resource<CardDto>>> getRemainingHand(@PathVariable String gameIdParameter,
+	                                                           @PathVariable String roundIdParameter,
+	                                                           HttpSession session) {
+		LOGGER.debug("getRemainingHand gameId={}, roundId={}", gameIdParameter, roundIdParameter);
+
+		PlayerId sessionPlayerId = (PlayerId) session.getAttribute(PlayersResource.SESSION_PLAYER_ID_ATTRIBUTE);
+		if (sessionPlayerId == null) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
+
+		GameId gameId = GameId.of(gameIdParameter);
+		RoundId roundId = RoundId.of(roundIdParameter);
+
+		return playerRepository.findById(gameId, sessionPlayerId)
+				.map(player -> player.remainingHand(roundId))
+				.map(cards -> cardResourcesAssembler.toResource(Triple.of(gameId, roundId, cards)))
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@DeleteMapping(path = "/{roundIdParameter}/cards", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -88,7 +113,7 @@ public class RoundResource {
 
 		Optional<Game> game = gameRepository.findById(gameId);
 		Optional<Round> round = roundRepository.findById(roundId);
-		if (!game.isPresent() || !round.isPresent()) {
+		if (game.isEmpty() || round.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 

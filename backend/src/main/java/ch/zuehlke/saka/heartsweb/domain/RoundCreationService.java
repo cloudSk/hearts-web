@@ -2,10 +2,7 @@ package ch.zuehlke.saka.heartsweb.domain;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -47,7 +44,7 @@ public class RoundCreationService {
 	private void assignRandomHands(List<Player> players, RoundId roundId) {
 		List<List<Card>> hands = createRandomHands();
 		IntStream.range(0, Game.PLAYERS_PER_GAME).forEach(index -> {
-			List<Card> cardsInHand = hands.get(index);
+			Set<Card> cardsInHand = new HashSet<>(hands.get(index));
 			players.get(index).assignHand(cardsInHand, roundId);
 		});
 

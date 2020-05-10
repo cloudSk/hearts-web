@@ -2,8 +2,8 @@ package ch.zuehlke.saka.heartsweb.domain;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -16,7 +16,7 @@ public class PlayerTest {
 		Player testee = new Player("Player");
 		Card card = new Card(CardColor.HEARTS, CardRank.ACE);
 		Round round = roundMock();
-		testee.assignHand(Arrays.asList(card), round.id());
+		testee.assignHand(Set.of(card), round.id());
 
 		testee.playCardToRound(card, round);
 
@@ -27,7 +27,7 @@ public class PlayerTest {
 	public void playCardToRound_emptyHand_throwsIllegalArgumentException() {
 		Round round = roundMock();
 		Player testee = new Player("Player");
-		testee.assignHand(new ArrayList<>(), round.id());
+		testee.assignHand(new HashSet<>(), round.id());
 		Card card = new Card(CardColor.HEARTS, CardRank.ACE);
 
 		Throwable result = catchThrowable(() -> testee.playCardToRound(card, round));
@@ -41,7 +41,7 @@ public class PlayerTest {
 		Player testee = new Player(game.sittingOrder().north(), "Player");
 		Card card = new Card(CardColor.HEARTS, CardRank.ACE);
 		Round round = new Round(game.id(), testee.id(), game.sittingOrder());
-		testee.assignHand(Arrays.asList(card), round.id());
+		testee.assignHand(Set.of(card), round.id());
 
 		testee.playCardToRound(card, round);
 		Throwable result = catchThrowable(() -> testee.playCardToRound(card, round));

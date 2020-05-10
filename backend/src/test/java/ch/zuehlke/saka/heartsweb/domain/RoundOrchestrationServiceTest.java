@@ -4,8 +4,8 @@ import ch.zuehlke.saka.heartsweb.infrastructure.dataaccess.PlayerInMemoryReposit
 import ch.zuehlke.saka.heartsweb.infrastructure.dataaccess.RoundInMemoryRepository;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -47,7 +47,7 @@ public class RoundOrchestrationServiceTest {
 		Game game = GameFixture.gameWith4Players();
 		Player player = PlayerFixture.anyPlayerWithId(game.sittingOrder().north());
 		Round round = new Round(game.id(), player.id(), game.sittingOrder());
-		player.assignHand(Collections.singletonList(ANY_CARD), round.id());
+		player.assignHand(Set.of(ANY_CARD), round.id());
 		PlayerRepository playerRepository = playerRepositoryContainingPlayer(game.id(), player);
 		RoundRepository roundRepository = roundRepositoryContainingRound(round);
 

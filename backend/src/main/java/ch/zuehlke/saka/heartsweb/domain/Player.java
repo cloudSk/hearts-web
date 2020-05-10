@@ -5,7 +5,7 @@ import java.util.*;
 public class Player {
 	private final PlayerId id;
 	private String name;
-	private final Map<RoundId, List<Card>> hands;
+	private final Map<RoundId, Set<Card>> hands;
 
 	public Player(String name) {
 		this(PlayerId.generate(), name);
@@ -25,12 +25,12 @@ public class Player {
 		return name;
 	}
 
-	public List<Card> remainingHand(RoundId roundId) {
-		return Collections.unmodifiableList(handOfRound(roundId));
+	public Set<Card> remainingHand(RoundId roundId) {
+		return Collections.unmodifiableSet(handOfRound(roundId));
 	}
 
 	void playCardToRound(Card cardToPlay, Round round) {
-		List<Card> hand = handOfRound(round.id());
+		Set<Card> hand = handOfRound(round.id());
 		if (!hand.contains(cardToPlay)) {
 			throw new IllegalArgumentException("Card=" + cardToPlay + " is not in current hand of playerId=" + id);
 		}
@@ -39,8 +39,8 @@ public class Player {
 		hand.remove(cardToPlay);
 	}
 
-	void assignHand(List<Card> cardsInHand, RoundId roundId) {
-		List<Card> hand = handOfRound(roundId);
+	void assignHand(Set<Card> cardsInHand, RoundId roundId) {
+		Set<Card> hand = handOfRound(roundId);
 		hand.clear();
 		hand.addAll(cardsInHand);
 	}
@@ -66,8 +66,8 @@ public class Player {
 		return id.hashCode();
 	}
 
-	private List<Card> handOfRound(RoundId roundId) {
-		hands.putIfAbsent(roundId, new ArrayList<>());
+	private Set<Card> handOfRound(RoundId roundId) {
+		hands.putIfAbsent(roundId, new HashSet<>());
 		return hands.get(roundId);
 	}
 }

@@ -93,18 +93,18 @@ public class RoundCreationServiceTest {
 		assertThat(players).hasSize(4);
 		assertThat(players).allMatch(player -> player.remainingHand(roundId).size() == 13);
 
-		List<Card> first = players.get(0).remainingHand(roundId);
-		List<Card> second = players.get(1).remainingHand(roundId);
-		List<Card> third = players.get(2).remainingHand(roundId);
-		List<Card> fourth = players.get(3).remainingHand(roundId);
+		Set<Card> first = players.get(0).remainingHand(roundId);
+		Set<Card> second = players.get(1).remainingHand(roundId);
+		Set<Card> third = players.get(2).remainingHand(roundId);
+		Set<Card> fourth = players.get(3).remainingHand(roundId);
 
-		assertThat(first).doesNotContainAnyElementsOf(joinLists(second, third, fourth));
-		assertThat(second).doesNotContainAnyElementsOf(joinLists(first, third, fourth));
-		assertThat(third).doesNotContainAnyElementsOf(joinLists(first, second, fourth));
-		assertThat(fourth).doesNotContainAnyElementsOf(joinLists(first, second, third));
+		assertThat(first).doesNotContainAnyElementsOf(joinSets(second, third, fourth));
+		assertThat(second).doesNotContainAnyElementsOf(joinSets(first, third, fourth));
+		assertThat(third).doesNotContainAnyElementsOf(joinSets(first, second, fourth));
+		assertThat(fourth).doesNotContainAnyElementsOf(joinSets(first, second, third));
 	}
 
-	private static List<Card> joinLists(List<Card>... lists) {
+	private static List<Card> joinSets(Set<Card>... lists) {
 		return Arrays.stream(lists)
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
