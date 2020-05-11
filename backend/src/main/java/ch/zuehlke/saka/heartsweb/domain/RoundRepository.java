@@ -7,5 +7,5 @@ public interface RoundRepository {
 
 	void update(Round round);
 
-	Optional<Round> findById(RoundId roundId);
+	Optional<Round> findById(GameId gameId, RoundId roundId);
 }

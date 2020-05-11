@@ -1,11 +1,14 @@
 package ch.zuehlke.saka.heartsweb.infrastructure.dataaccess;
 
+import ch.zuehlke.saka.heartsweb.domain.GameId;
 import ch.zuehlke.saka.heartsweb.domain.Round;
 import ch.zuehlke.saka.heartsweb.domain.RoundId;
 import ch.zuehlke.saka.heartsweb.domain.RoundRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class RoundInMemoryRepository implements RoundRepository {
@@ -22,7 +25,7 @@ public class RoundInMemoryRepository implements RoundRepository {
 	}
 
 	@Override
-	public Optional<Round> findById(RoundId roundId) {
+	public Optional<Round> findById(GameId gameId, RoundId roundId) {
 		return rounds.stream()
 				.filter(round -> round.id().equals(roundId))
 				.findFirst();

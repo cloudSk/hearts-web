@@ -49,7 +49,7 @@ public class RoundOrchestrationServiceTest {
 		Round round = new Round(game.id(), player.id(), game.sittingOrder());
 		player.assignHand(Set.of(ANY_CARD), round.id());
 		PlayerRepository playerRepository = playerRepositoryContainingPlayer(game.id(), player);
-		RoundRepository roundRepository = roundRepositoryContainingRound(round);
+		RoundRepository roundRepository = roundRepositoryContainingRound(round, game.id());
 
 		RoundOrchestrationService testee = new RoundOrchestrationService(playerRepository, roundRepository);
 		testee.playCard(game.id(), player.id(), round.id(), ANY_CARD);
@@ -64,9 +64,9 @@ public class RoundOrchestrationServiceTest {
 		return repository;
 	}
 
-	private RoundRepository roundRepositoryContainingRound(Round round) {
+	private RoundRepository roundRepositoryContainingRound(Round round, GameId gameId) {
 		RoundRepository repository = mock(RoundRepository.class);
-		when(repository.findById(round.id())).thenReturn(Optional.of(round));
+		when(repository.findById(gameId, round.id())).thenReturn(Optional.of(round));
 		return repository;
 	}
 }

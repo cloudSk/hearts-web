@@ -11,33 +11,21 @@ public class CardDto {
 	public CardDto() {
 	}
 
-	public CardDto(CardColor color, CardRank rank, CardDtoId id) {
+	public CardDto(CardColor color, CardRank rank) {
 		this.color = color;
 		this.rank = rank;
-		this.id = id;
+		this.id = CardDtoId.of(color, rank);
 	}
 
 	public CardColor getColor() {
 		return color;
 	}
 
-	public void setColor(CardColor color) {
-		this.color = color;
-	}
-
 	public CardRank getRank() {
 		return rank;
 	}
 
-	public void setRank(CardRank rank) {
-		this.rank = rank;
-	}
-
 	public CardDtoId getId() {
 		return id;
-	}
-
-	public void setId(CardDtoId id) {
-		this.id = id;
 	}
 }

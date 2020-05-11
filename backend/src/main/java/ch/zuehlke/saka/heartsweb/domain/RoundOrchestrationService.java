@@ -15,8 +15,8 @@ public class RoundOrchestrationService {
 	public void playCard(GameId gameId, PlayerId playerId, RoundId roundId, Card cardToPlay) {
 		Player player = playerRepository.findById(gameId, playerId)
 				.orElseThrow(() -> new IllegalArgumentException("Player with playerId=" + playerId + " not found in game=" + gameId));
-		Round round = roundRepository.findById(roundId)
-				.orElseThrow(() -> new IllegalArgumentException("Round with roundId=" + roundId + " not found"));
+		Round round = roundRepository.findById(gameId, roundId)
+				.orElseThrow(() -> new IllegalArgumentException("Round with roundId=" + roundId + " not found in game=" + gameId));
 
 		player.playCardToRound(cardToPlay, round);
 		playerRepository.update(player);

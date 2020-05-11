@@ -26,7 +26,7 @@ public class CardResourcesAssembler implements
 		RoundId roundId = entity.getMiddle();
 
 		List<Resource<CardDto>> resources = entity.getRight().stream()
-				.map(card -> new CardDto(card.cardColor(), card.cardRank(), CardDtoId.of(card.cardColor(), card.cardRank())))
+				.map(card -> new CardDto(card.cardColor(), card.cardRank()))
 				.map(cardDto -> new Resource<>(cardDto, linkToSelf(gameId, roundId, cardDto)))
 				.collect(Collectors.toList());
 		return new Resources<>(resources);

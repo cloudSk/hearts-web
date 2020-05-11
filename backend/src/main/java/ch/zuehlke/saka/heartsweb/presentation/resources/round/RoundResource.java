@@ -51,7 +51,7 @@ public class RoundResource {
 		RoundId roundId = RoundId.of(roundIdParameter);
 		GameId gameId = GameId.of(gameIdParameter);
 
-		return roundRepository.findById(roundId)
+		return roundRepository.findById(gameId, roundId)
 				.map(round -> roundResourceAssembler.toResource(Pair.of(gameId, round)))
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
@@ -96,12 +96,12 @@ public class RoundResource {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
-	@DeleteMapping(path = "/{roundIdParameter}/cards", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(path = "/{roundIdParameter}/cards/{cardIdParameter}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Resource<RoundDto>> playCard(@PathVariable String gameIdParameter,
 	                                                   @PathVariable String roundIdParameter, HttpSession session,
-	                                                   @RequestBody CardDto cardToPlay) {
-		LOGGER.debug("playCard gameId={}, roundId={}, card={}:{}", gameIdParameter, roundIdParameter,
-				cardToPlay.getColor(), cardToPlay.getRank());
+	                                                   @PathVariable String cardIdParameter) {
+		LOGGER.debug("playCard gameId={}, roundId={}, cardIdentifier={}", gameIdParameter, roundIdParameter,
+				cardIdParameter);
 
 		PlayerId sessionPlayerId = (PlayerId) session.getAttribute(PlayersResource.SESSION_PLAYER_ID_ATTRIBUTE);
 		if (sessionPlayerId == null) {
@@ -110,19 +110,19 @@ public class RoundResource {
 
 		GameId gameId = GameId.of(gameIdParameter);
 		RoundId roundId = RoundId.of(roundIdParameter);
+		CardDtoId cardDtoId = CardDtoId.of(cardIdParameter);
 
-		Optional<Game> game = gameRepository.findById(gameId);
-		Optional<Round> round = roundRepository.findById(roundId);
-		if (game.isEmpty() || round.isEmpty()) {
+		Optional<Round> round = roundRepository.findById(gameId, roundId);
+		if (round.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 
-		roundOrchestrationService.playCard(gameId, sessionPlayerId, roundId, map(cardToPlay));
+		roundOrchestrationService.playCard(gameId, sessionPlayerId, roundId, map(cardDtoId));
 		return ResponseEntity
 				.ok(roundResourceAssembler.toResource(Pair.of(gameId, round.get())));
 	}
 
-	private Card map(CardDto cardDto) {
-		return new Card(cardDto.getColor(), cardDto.getRank());
+	private Card map(CardDtoId cardDtoId) {
+		return new Card(cardDtoId.getColor(), cardDtoId.getRank());
 	}
 }
