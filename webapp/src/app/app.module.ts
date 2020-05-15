@@ -5,26 +5,29 @@ import { FormsModule } from '@angular/forms';
 
 import {AppComponent} from './app.component';
 import {HttpClientModule} from '@angular/common/http';
-import {CreateGameComponent} from "./game-start/create-game.component";
-import {WaitingAreaComponent} from "./game-start/waiting-area.component";
-import {WelcomeScreenComponent} from "./welcome-screen.component";
-import {JoinGameComponent} from "./game-start/join-game.component";
+import {CreateGameComponent} from './game-start/create-game.component';
+import {WaitingAreaComponent} from './game-start/waiting-area.component';
+import {WelcomeScreenComponent} from './welcome-screen.component';
+import {JoinGameComponent} from './game-start/join-game.component';
+import {PlayRoundComponent} from './game-play/play-round.component';
 
 const appRoutes: Routes = [
+  { path: 'welcome-screen', component: WelcomeScreenComponent },
   { path: 'create-game', component: CreateGameComponent },
   { path: 'join-game', component: JoinGameComponent},
   { path: 'waiting-area', component: WaitingAreaComponent },
-  { path: 'welcome-screen', component: WelcomeScreenComponent },
+  { path: 'play-round', component: PlayRoundComponent },
   { path: '', redirectTo: '/welcome-screen', pathMatch: 'full'}
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    CreateGameComponent,
-    WaitingAreaComponent,
     WelcomeScreenComponent,
-    JoinGameComponent
+    CreateGameComponent,
+    JoinGameComponent,
+    WaitingAreaComponent,
+    PlayRoundComponent
   ],
   imports: [
     BrowserModule,

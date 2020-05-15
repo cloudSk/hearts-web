@@ -31,6 +31,14 @@ public class Round {
 		return roundId;
 	}
 
+	public PlayerId roundInitiator() {
+		return roundInitiator;
+	}
+
+	public GameId gameId() {
+		return gameId;
+	}
+
 	public void playCard(Card card, PlayerId playerId) {
 		if (roundFinished()) {
 			throw new IllegalStateException("Round with id=" + id() + " is already finished");

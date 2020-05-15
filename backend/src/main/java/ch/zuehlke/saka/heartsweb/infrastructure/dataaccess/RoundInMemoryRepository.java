@@ -6,17 +6,16 @@ import ch.zuehlke.saka.heartsweb.domain.RoundId;
 import ch.zuehlke.saka.heartsweb.domain.RoundRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 public class RoundInMemoryRepository implements RoundRepository {
-	private final Set<Round> rounds = new HashSet<>();
+	private final Map<GameId, Set<Round>> rounds = new HashMap<>();
 
 	@Override
 	public void add(Round round) {
-		rounds.add(round);
+		rounds.putIfAbsent(round.gameId(), new HashSet<>());
+		rounds.get(round.gameId()).add(round);
 	}
 
 	@Override
@@ -26,8 +25,17 @@ public class RoundInMemoryRepository implements RoundRepository {
 
 	@Override
 	public Optional<Round> findById(GameId gameId, RoundId roundId) {
-		return rounds.stream()
+		rounds.putIfAbsent(gameId, new HashSet<>());
+		return rounds.get(gameId).stream()
 				.filter(round -> round.id().equals(roundId))
+				.findFirst();
+	}
+
+	@Override
+	public Optional<Round> findActiveRoundOfGame(GameId gameId) {
+		rounds.putIfAbsent(gameId, new HashSet<>());
+		return rounds.get(gameId).stream()
+				.filter(round -> !round.roundFinished())
 				.findFirst();
 	}
 }

@@ -1,10 +1,10 @@
 import {Component} from '@angular/core';
-import {PlayerResourceService} from "./player-resource.service";
-import {Player} from "./player";
+import {PlayerResourceService} from '../shared/player-resource.service';
+import {Player} from '../shared/player';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'join-game',
+  selector: 'app-join-game',
   templateUrl: './join-game.component.html'
 })
 export class JoinGameComponent {
@@ -14,10 +14,10 @@ export class JoinGameComponent {
   constructor(private playerResourceService: PlayerResourceService, private router: Router) { }
 
   joinGame() {
-    let player = new Player();
-    player.name = this.playerName;
+    const playerToJoin = new Player();
+    playerToJoin.name = this.playerName;
 
-    this.playerResourceService.joinGame(this.gameId, player)
+    this.playerResourceService.joinGame(this.gameId, playerToJoin)
       .subscribe(player => this.router.navigate(['waiting-area'], {queryParams: {playerId: player.id, gameId: this.gameId}}));
   }
 }

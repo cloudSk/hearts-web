@@ -8,4 +8,6 @@ public interface RoundRepository {
 	void update(Round round);
 
 	Optional<Round> findById(GameId gameId, RoundId roundId);
+
+	Optional<Round> findActiveRoundOfGame(GameId gameId);
 }

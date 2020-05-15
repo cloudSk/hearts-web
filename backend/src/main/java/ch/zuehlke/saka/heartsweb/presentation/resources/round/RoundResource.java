@@ -57,7 +57,7 @@ public class RoundResource {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping
 	public ResponseEntity<Resource<RoundDto>> addRound(@PathVariable String gameIdParameter) {
 		LOGGER.debug("add gameId={}", gameIdParameter);
 

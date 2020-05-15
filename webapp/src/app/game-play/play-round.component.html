@@ -1,0 +1,15 @@
+<h1>Hello {{player.name}}</h1>
+<p>Players in your game:</p>
+<ul>
+  <li *ngFor="let player of players; index as i">
+    <p>Player {{i + 1}}: {{player.name}}</p>
+  </li>
+</ul>
+
+<ul>
+  <li *ngFor="let card of currentHand">
+    <p>Card: {{card.color}} {{card.rank}}</p>
+  </li>
+</ul>
+
+<button class="button" (click)="playCard()" [disabled]="!cardSelected()">Play card</button>

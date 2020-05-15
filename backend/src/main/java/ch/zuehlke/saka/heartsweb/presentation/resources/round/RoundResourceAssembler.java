@@ -18,11 +18,7 @@ public class RoundResourceAssembler implements ResourceAssembler<Pair<GameId, Ro
 		GameId gameId = entity.getLeft();
 		Round round = entity.getRight();
 
-		return new Resource<>(map(round),
+		return new Resource<>(new RoundDto(round),
 				linkTo(methodOn(RoundResource.class).findById(gameId.toString(), round.id().toString())).withSelfRel());
-	}
-
-	private RoundDto map(Round entity) {
-		return new RoundDto(entity.id().toString());
 	}
 }

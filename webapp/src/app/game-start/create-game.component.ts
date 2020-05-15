@@ -1,11 +1,11 @@
 import {Component} from '@angular/core';
-import {GameResourceService} from "./game-resource.service";
-import {PlayerResourceService} from "./player-resource.service";
-import {Player} from "./player";
+import {GameResourceService} from './game-resource.service';
+import {PlayerResourceService} from '../shared/player-resource.service';
+import {Player} from '../shared/player';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'create-game',
+  selector: 'app-create-game',
   templateUrl: './create-game.component.html'
 })
 export class CreateGameComponent {
@@ -18,11 +18,11 @@ export class CreateGameComponent {
   ) { }
 
   createGame() {
-    let player = new Player();
-    player.name = this.playerName;
+    const playerToCreate = new Player();
+    playerToCreate.name = this.playerName;
 
     this.gameResourceService.createGame().subscribe(
-      game => this.playerResourceService.joinGame(game.id, player).subscribe(
+      game => this.playerResourceService.joinGame(game.id, playerToCreate).subscribe(
         player => this.router.navigate(['waiting-area'], {queryParams: {playerId: player.id, gameId: game.id}})
       )
     );

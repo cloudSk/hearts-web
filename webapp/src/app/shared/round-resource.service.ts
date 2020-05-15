@@ -4,36 +4,37 @@ import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import * as SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
-import {Player} from './player';
 import {environment} from '../../environments/environment';
+import {Round} from './round';
+import {Card} from '../game-play/card';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class PlayerResourceService {
+export class RoundResourceService {
   private client: Client;
 
   constructor(private http: HttpClient) {
     this.client = this.initializeClient();
   }
 
-  joinGame(gameId: string, player: Player): Observable<Player> {
-    const url = `${environment.apiUrl}/games/${gameId}/players`;
-    return this.http.post<Player>(url, player).pipe(
-      tap((newPlayer: Player) => console.log(`Player with id=${newPlayer.id} joined the game`))
+  startRound(gameId: string): Observable<Round> {
+    const url = `${environment.apiUrl}/games/${gameId}/rounds`;
+    return this.http.post<Round>(url, null).pipe(
+      tap((newRound: Round) => console.log(`Round with id=${newRound.id} created`))
     );
   }
 
-  findPlayer(gameId: string, playerId: string): Observable<Player> {
-    const url = `${environment.apiUrl}/games/${gameId}/players/${playerId}`;
-    return this.http.get<Player>(url);
+  getRemainingCardsInRound(gameId: string, roundId: string): Observable<Card[]> {
+    const url = `${environment.apiUrl}/games/${gameId}/rounds/${roundId}/cards`;
+    return this.http.get<Card[]>(url);
   }
 
-  allPlayersInGame(gameId: string): Observable<Player[]> {
-    return new Observable<Player[]>(observer => {
+  subscribeCurrentRound(gameId: string): Observable<Round> {
+    return new Observable<Round>(observer => {
       this.client.onConnect = () => {
-        this.client.subscribe(`/topic/joinedPlayers/${gameId}`, (message => {
+        this.client.subscribe(`/topic/activeRound/${gameId}`, (message => {
           const body = JSON.parse(message.body);
           observer.next(body.content);
         }));

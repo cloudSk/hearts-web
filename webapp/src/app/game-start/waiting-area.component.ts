@@ -1,10 +1,12 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {PlayerResourceService} from './player-resource.service';
-import {Player} from './player';
-import {ActivatedRoute} from '@angular/router';
+import {PlayerResourceService} from '../shared/player-resource.service';
+import {Player} from '../shared/player';
+import {ActivatedRoute, Router} from '@angular/router';
+import {RoundResourceService} from '../shared/round-resource.service';
+import {Round} from '../shared/round';
 
 @Component({
-  selector: 'waiting-area',
+  selector: 'app-waiting-area',
   templateUrl: './waiting-area.component.html'
 })
 export class WaitingAreaComponent implements OnInit, OnDestroy {
@@ -12,7 +14,8 @@ export class WaitingAreaComponent implements OnInit, OnDestroy {
   gameId: string;
   players: Player[] = [];
 
-  constructor(private playerResourceService: PlayerResourceService, private route: ActivatedRoute) { }
+  constructor(private playerResourceService: PlayerResourceService, private roundResourceService: RoundResourceService,
+              private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     const playerId = this.route.snapshot.queryParamMap.get('playerId');
@@ -20,12 +23,14 @@ export class WaitingAreaComponent implements OnInit, OnDestroy {
 
     this.playerResourceService.findPlayer(this.gameId, playerId)
       .subscribe(player => this.player = player);
-    this.playerResourceService.allPlayersInGame(this.gameId)
+    this.playerResourceService.subscribeToPlayersInGame(this.gameId)
       .subscribe(players => this.players = players);
+    this.roundResourceService.subscribeCurrentRound(this.gameId)
+      .subscribe(round => this.navigateToPlayRound(round));
   }
 
   ngOnDestroy(): void {
-    this.playerResourceService.unsubscribe();
+    this.unsubscribeWebSockets();
   }
 
   waitingOnPlayers(): boolean {
@@ -33,5 +38,19 @@ export class WaitingAreaComponent implements OnInit, OnDestroy {
   }
 
   startGame() {
+    this.roundResourceService.startRound(this.gameId)
+      .subscribe(round => this.navigateToPlayRound(round));
+  }
+
+  private navigateToPlayRound(round: Round) {
+    this.unsubscribeWebSockets();
+    this.router.navigate(['play-round'], {queryParams: {playerId: this.player.id, gameId: this.gameId,
+        roundId: round.id
+    }});
+  }
+
+  private unsubscribeWebSockets() {
+    this.playerResourceService.unsubscribe();
+    this.roundResourceService.unsubscribe();
   }
 }

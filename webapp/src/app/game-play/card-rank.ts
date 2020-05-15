@@ -1,0 +1,15 @@
+export enum CardRank {
+  ACE,
+  KING,
+  QUEEN,
+  JACK,
+  NUMBER_10,
+  NUMBER_09,
+  NUMBER_08,
+  NUMBER_07,
+  NUMBER_06,
+  NUMBER_05,
+  NUMBER_04,
+  NUMBER_03,
+  NUMBER_02
+}
