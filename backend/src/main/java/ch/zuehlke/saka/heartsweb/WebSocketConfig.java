@@ -17,7 +17,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/hearts-web-websocket")
-				.setAllowedOrigins("http://localhost:4200")
-				.withSockJS();
+				.setAllowedOrigins("http://localhost:4200");
 	}
 }

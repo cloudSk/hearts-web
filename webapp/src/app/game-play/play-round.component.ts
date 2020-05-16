@@ -4,6 +4,8 @@ import {Player} from '../shared/player';
 import {ActivatedRoute} from '@angular/router';
 import {RoundResourceService} from '../shared/round-resource.service';
 import {Card} from './card';
+import {WebsocketService} from '../shared/websocket.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-play-round',
@@ -15,9 +17,11 @@ export class PlayRoundComponent implements OnInit, OnDestroy {
   roundId: string;
   players: Player[] = [];
   currentHand: Card[] = [];
+  playersSubscription: Subscription;
+  roundSubscription: Subscription;
 
   constructor(private playerResourceService: PlayerResourceService, private roundResourceService: RoundResourceService,
-              private route: ActivatedRoute) { }
+              private websocketService: WebsocketService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     const playerId = this.route.snapshot.queryParamMap.get('playerId');
@@ -26,15 +30,15 @@ export class PlayRoundComponent implements OnInit, OnDestroy {
 
     this.playerResourceService.findPlayer(this.gameId, playerId)
       .subscribe(player => this.player = player);
-    this.playerResourceService.subscribeToPlayersInGame(this.gameId)
+    this.playersSubscription = this.websocketService.watchPlayersInGame(this.gameId)
       .subscribe(players => this.players = players);
     this.roundResourceService.getRemainingCardsInRound(this.gameId, this.roundId)
       .subscribe(cards => this.currentHand = cards);
   }
 
   ngOnDestroy(): void {
-    this.playerResourceService.unsubscribe();
-    this.roundResourceService.unsubscribe();
+    this.playersSubscription.unsubscribe();
+    this.roundSubscription.unsubscribe();
   }
 
   cardSelected(): boolean {

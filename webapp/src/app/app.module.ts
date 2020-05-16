@@ -1,7 +1,7 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import {FormsModule} from '@angular/forms';
 
 import {AppComponent} from './app.component';
 import {HttpClientModule} from '@angular/common/http';
@@ -10,6 +10,8 @@ import {WaitingAreaComponent} from './game-start/waiting-area.component';
 import {WelcomeScreenComponent} from './welcome-screen.component';
 import {JoinGameComponent} from './game-start/join-game.component';
 import {PlayRoundComponent} from './game-play/play-round.component';
+import {InjectableRxStompConfig, RxStompService, rxStompServiceFactory} from '@stomp/ng2-stompjs';
+import {RxStompConfig} from './rx-stomp.config';
 
 const appRoutes: Routes = [
   { path: 'welcome-screen', component: WelcomeScreenComponent },
@@ -35,7 +37,17 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes, { useHash: true }),
     FormsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: InjectableRxStompConfig,
+      useValue: RxStompConfig
+    },
+    {
+      provide: RxStompService,
+      useFactory: rxStompServiceFactory,
+      deps: [InjectableRxStompConfig]
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

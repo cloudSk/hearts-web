@@ -1,9 +1,11 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {PlayerResourceService} from '../shared/player-resource.service';
 import {Player} from '../shared/player';
 import {ActivatedRoute, Router} from '@angular/router';
-import {RoundResourceService} from '../shared/round-resource.service';
 import {Round} from '../shared/round';
+import {WebsocketService} from '../shared/websocket.service';
+import {RoundResourceService} from '../shared/round-resource.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-waiting-area',
@@ -13,9 +15,11 @@ export class WaitingAreaComponent implements OnInit, OnDestroy {
   player: Player = new Player();
   gameId: string;
   players: Player[] = [];
+  playersSubscription: Subscription;
+  roundSubscription: Subscription;
 
-  constructor(private playerResourceService: PlayerResourceService, private roundResourceService: RoundResourceService,
-              private route: ActivatedRoute, private router: Router) { }
+  constructor(private playerResourceService: PlayerResourceService, private websocketService: WebsocketService,
+              private roundResourceService: RoundResourceService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     const playerId = this.route.snapshot.queryParamMap.get('playerId');
@@ -23,9 +27,9 @@ export class WaitingAreaComponent implements OnInit, OnDestroy {
 
     this.playerResourceService.findPlayer(this.gameId, playerId)
       .subscribe(player => this.player = player);
-    this.playerResourceService.subscribeToPlayersInGame(this.gameId)
+    this.playersSubscription = this.websocketService.watchPlayersInGame(this.gameId)
       .subscribe(players => this.players = players);
-    this.roundResourceService.subscribeCurrentRound(this.gameId)
+    this.roundSubscription = this.websocketService.watchCurrentRound(this.gameId)
       .subscribe(round => this.navigateToPlayRound(round));
   }
 
@@ -50,7 +54,7 @@ export class WaitingAreaComponent implements OnInit, OnDestroy {
   }
 
   private unsubscribeWebSockets() {
-    this.playerResourceService.unsubscribe();
-    this.roundResourceService.unsubscribe();
+    this.playersSubscription.unsubscribe();
+    this.roundSubscription.unsubscribe();
   }
 }
